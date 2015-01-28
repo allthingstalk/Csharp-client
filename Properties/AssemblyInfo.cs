@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("att.iot.client")]
-[assembly: AssemblyDescription("A C# client library for connecting internet of things applications to the AllthingsTalk platform")]
+[assembly: AssemblyDescription("A C# client library for connecting internet of things applications to the AllthingsTalk platform. It provides the communication layer, both HTTP and pub-sub to the cloud for systems that perform home automation, smart metering, remote sensing, telemetry, remote control and much more.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("AllThingsTalk")]
 [assembly: AssemblyProduct("att.iot.client")]

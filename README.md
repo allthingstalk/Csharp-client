@@ -24,6 +24,9 @@ Depends on:
 - [nlog](http://nlog-project.org/) for advanced logging
 - [m2mqtt](https://m2mqtt.codeplex.com/) mqtt library for pub-sub communication.
 
+## installation
+There's a nuget package available at: [https://www.nuget.org/packages/att.iot.client/](https://www.nuget.org/packages/att.iot.client/) for easy installation.
+
 ## usage
 ### create gateway
     IPEndPoint address = GetAddress();		//get the ip address of the gateway
