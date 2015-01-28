@@ -1,0 +1,23 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "att.iot.client", "att.iot.client.csproj", "{08AE2428-E40F-41BE-9409-9B3F37BFB1CC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Production_debug|Any CPU = Production_debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{08AE2428-E40F-41BE-9409-9B3F37BFB1CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{08AE2428-E40F-41BE-9409-9B3F37BFB1CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{08AE2428-E40F-41BE-9409-9B3F37BFB1CC}.Production_debug|Any CPU.ActiveCfg = Production_debug|Any CPU
+		{08AE2428-E40F-41BE-9409-9B3F37BFB1CC}.Production_debug|Any CPU.Build.0 = Production_debug|Any CPU
+		{08AE2428-E40F-41BE-9409-9B3F37BFB1CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{08AE2428-E40F-41BE-9409-9B3F37BFB1CC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
