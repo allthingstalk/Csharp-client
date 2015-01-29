@@ -1,5 +1,4 @@
-﻿using NLog;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,8 +21,6 @@ namespace att.iot.client
         const string THINGENTITY = "t";
         const string CLIENTENTITY = "client"; 
         #endregion
-
-        static Logger _logger = LogManager.GetCurrentClassLogger();
 
 
         #region ctor
@@ -85,10 +82,7 @@ namespace att.iot.client
                 if (int.TryParse(parts[i], out val) == true)
                     res[i - offset] = val;
                 else
-                {
-                    _logger.Error("failed to convert asset id to int[], problem with: {0} in {1}", parts[i], string.Join("_", parts));
-                    return null;
-                }
+                    throw new InvalidOperationException(string.Format("failed to convert asset id to int[], problem with: {0} in {1}", parts[i], string.Join("_", parts)));
             }
             return res;
         }
