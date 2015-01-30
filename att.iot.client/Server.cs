@@ -847,12 +847,12 @@ namespace att.iot.client
 
         /// <summary>
         /// Simple way to create or update an asset.
-        /// Works for assets that belong to stand alone devices or devices connected to a gateway.
-        /// When there is no gateway defined, don't fill in the property in the credentials
         /// For mor advanced features, use <see cref="IServer.UpdateAsset" />
         /// </summary>
         /// <param name="credentials">The credentials for the gateway and client.</param>
-        /// <param name="deviceId">The device identifier (local).</param>
+        /// <param name="deviceId">The device identifier. If there is no gateway defined, this has to be the device id as specified by cloudapp. If
+        /// There is a gateway known, the id of the device can be local to the gateway.
+        /// </param>
         /// <param name="assetId">The asset identifier (local).</param>
         /// <param name="name">The name of the asset.</param>
         /// <param name="description">The description.</param>
@@ -866,15 +866,22 @@ namespace att.iot.client
             try
             {
                 string content = string.Format("{{ 'is' : '{0}', 'name' : '{1}', 'description' : '{2}', 'deviceId': '{3}', 'profile' : {{ 'type' : '{4}' }}}}", isActuator == true? "actuator": "sensor", name, description, deviceId, type);
-                TopicPath path = new TopicPath()
+                string remoteAssetId;
+                if (string.IsNullOrEmpty(credentials.GatewayId) == false)
                 {
-                    Gateway = string.IsNullOrEmpty(credentials.GatewayId) == false ? credentials.GatewayId : credentials.ClientId,
-                    DeviceId = deviceId,
-                    AssetId = new int[] { assetId }
-                };
+                    TopicPath path = new TopicPath()
+                    {
+                        Gateway = credentials.GatewayId,
+                        DeviceId = deviceId,
+                        AssetId = new int[] { assetId }
+                    };
+                    remoteAssetId = path.RemoteAssetId;
+                }
+                else
+                    remoteAssetId = string.Format("{0}_{1}", deviceId, assetId);
 
                 string contentStr = content.ToString();
-                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Put, "api/Asset/" + path.RemoteAssetId);
+                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Put, "api/Asset/" + remoteAssetId);
                 if (string.IsNullOrEmpty(credentials.GatewayId) == false)
                 {
                     request.Headers.Add("Auth-GatewayKey", credentials.ClientKey);
