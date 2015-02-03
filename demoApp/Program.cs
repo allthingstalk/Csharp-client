@@ -11,8 +11,8 @@ namespace demoApp
     class Program
     {
         static IServer _server;
-        static GatewayCredentials credentials = new GatewayCredentials() { ClientKey = "testjan", ClientId = "5i4duakv2bq" };
-        static string _deviceId = "jnyCJXgkqFeh8N5cPefIDhh";
+        static GatewayCredentials credentials = new GatewayCredentials() { ClientKey = "your client key", ClientId = "your client id" };
+        static string _deviceId;
         static MyLogger _logger;
 
 
@@ -26,7 +26,7 @@ namespace demoApp
                 success = !string.IsNullOrEmpty(_deviceId);
             }
             else
-                success = true;//_server.UpdateDevice(credentials, _deviceId, "C# test device", "a device created from my test script");
+                success = _server.UpdateDevice(credentials, _deviceId, "C# test device", "a device created from my test script");
             if (success)
             {
                 _server.UpdateAsset(credentials, _deviceId, 1, "test actuator", "a test actuator", true, "bool");

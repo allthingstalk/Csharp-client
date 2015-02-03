@@ -1,5 +1,5 @@
 ﻿using att.iot.client;
-using NLog;
+//using NLog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +10,8 @@ namespace demoApp
 {
     public class MyLogger: ILogger
     {
-        static Logger _logger = LogManager.GetCurrentClassLogger();
+        //static Logger _logger = LogManager.GetCurrentClassLogger();
+
 
         /// <summary>
         /// Writes a diagnostic message at the trace level to the desired output using the specified arguments.
@@ -19,7 +20,8 @@ namespace demoApp
         /// <param name="args">any arguments to replace in the message.</param>
         public void Trace(string message, params object[] args)
         {
-            _logger.Trace(message, args);
+            //_logger.Trace(message, args);
+            Console.WriteLine("trace: " + message, args);
         }
 
         /// <summary>
@@ -30,7 +32,8 @@ namespace demoApp
         /// <exception cref="System.NotImplementedException"></exception>
         public void Info(string message, params object[] args)
         {
-            _logger.Info(message, args);
+            //_logger.Info(message, args);
+            Console.WriteLine("Info: " + message, args);
         }
 
         /// <summary>
@@ -40,7 +43,8 @@ namespace demoApp
         /// <param name="args">any arguments to replace in the message.</param>
         public void Warn(string message, params object[] args)
         {
-            _logger.Warn(message, args);
+            //_logger.Warn(message, args);
+            Console.WriteLine("Warn: " + message, args);
         }
 
         /// <summary>
@@ -50,7 +54,8 @@ namespace demoApp
         /// <param name="args">any arguments to replace in the message.</param>
         public void Error(string message, params object[] args)
         {
-            _logger.Error(message, args);
+            //_logger.Error(message, args);
+            Console.WriteLine("Error: " + message, args);
         }
     }
 }

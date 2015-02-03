@@ -42,35 +42,53 @@ namespace att.iot.client
             if (path.Length < 5)
                 throw new NotSupportedException("topic structure invalid, expecting at least 6 parts");
 
-            if(path[0] != CLIENTENTITY)
-                throw new NotSupportedException("topic structure invalid, pos 0 should be 'client'");
-            else
+            if (path[0] == CLIENTENTITY)
+            {
                 ClientId = path[1];
+                if (path[3] == GATEWAYENTITY)
+                {
+                    Gateway = path[4];
 
-            if (path[3] != GATEWAYENTITY)
-                throw new NotSupportedException("topic structure invalid, pos 2 should be 'gateway'");
-            else
-                Gateway = path[4];
-
-            if (path.Length == 10)
-            {
-                string[] parts = path[6].Split('_');
-                DeviceId = parts[parts.Length - 1];
-                parts = path[8].Split('_');
-                AssetId = GetAssetId(parts, 2);
-                IsSetter = path[9] == MANAGEMENTCHANNEL;
-            }
-            else if (path.Length == 8)
-            {
-                string[] parts = path[6].Split('_');
-                if (path[5] == DEVICEENTITY)
+                    if (path.Length == 10)
+                    {
+                        string[] parts = path[6].Split('_');
+                        DeviceId = parts[parts.Length - 1];
+                        parts = path[8].Split('_');
+                        AssetId = GetAssetId(parts, 2);
+                        IsSetter = path[9] == MANAGEMENTCHANNEL;
+                    }
+                    else if (path.Length == 8)
+                    {
+                        string[] parts = path[6].Split('_');
+                        if (path[5] == DEVICEENTITY)
+                            DeviceId = parts[parts.Length - 1];
+                        else
+                            AssetId = GetAssetId(parts, 1);
+                        IsSetter = path[7] == MANAGEMENTCHANNEL;
+                    }
+                    else if (path.Length == 6)
+                        IsSetter = true;
+                }
+                else if (path[3] == DEVICEENTITY)
+                {
+                    string[] parts = path[4].Split('_');
                     DeviceId = parts[parts.Length - 1];
+                    if (path.Length == 6)
+                        IsSetter = path[5] == MANAGEMENTCHANNEL;
+                    else
+                    {
+                        parts = path[6].Split('_');
+                        AssetId = GetAssetId(parts, 1);
+                        IsSetter = path[7] == MANAGEMENTCHANNEL;
+                    }
+                }
                 else
-                    AssetId = GetAssetId(parts, 1);
-                IsSetter = path[7] == MANAGEMENTCHANNEL;
+                    throw new NotSupportedException("topic structure invalid, pos 2 should be 'gateway'");
+                
             }
-            else if (path.Length == 6)
-                IsSetter = true;
+            else
+                throw new NotSupportedException("topic structure invalid, pos 0 should be 'client'");
+                
         }
 
         private int[] GetAssetId(string[] parts, int offset)
@@ -129,13 +147,20 @@ namespace att.iot.client
 
         /// <summary>
         /// returns the device id, as formatted for the cloud app.
+        /// If there is a gateway known, the gateway id will be prepended to the device id, otherwise, only the device id is used.
         /// </summary>
         /// <value>
         /// The remote device identifier.
         /// </value>
         public string RemoteDeviceId
         {
-            get { return string.Format("{0}_{1}", Gateway, DeviceId); }
+            get 
+            {
+                if (string.IsNullOrEmpty(Gateway) == false)
+                    return string.Format("{0}_{1}", Gateway, DeviceId);
+                else
+                    return DeviceId;
+            }
             set
             {
                 string[] temp = value.Split('_');
@@ -213,7 +238,10 @@ namespace att.iot.client
                 if (string.IsNullOrEmpty(value) == false)
                 {
                     string[] parts = value.Split('_');
-                    StoreAssetId(parts, 1);
+                    if (parts.Length == 1)                                          //if it's a very simple asset id with no subparts, then don't try to split it up
+                        StoreAssetId(parts, 0);
+                    else
+                        StoreAssetId(parts, 1);                                     //we need to remove the device part from it?
                 }
                 else
                     AssetId = null;
@@ -318,7 +346,12 @@ namespace att.iot.client
         {
             string assetId;
             if (string.IsNullOrEmpty(DeviceId) == false)
-                assetId = string.Format("{0}_{1}_{2}", Gateway, DeviceId, AssetIdStr);
+            {
+                if (string.IsNullOrEmpty(Gateway) == false)
+                    assetId = string.Format("{0}_{1}_{2}", Gateway, DeviceId, AssetIdStr);
+                else
+                    assetId = string.Format("{0}_{1}", DeviceId, AssetIdStr);
+            }
             else
                 assetId = string.Format("{0}_{1}", Gateway, AssetIdStr);                                            //for assets attached to the gateway
             return string.Format("client/{0}/out/asset/{1}/state", ClientId, assetId);

@@ -286,11 +286,11 @@ namespace att.iot.client
 
         private string[] GetTopics(GatewayCredentials credentials, string deviceId)
         {
-            string[] topics = new string[5];
-            string root = string.Format("client/{0}/in/{1}/device/{0}", credentials.ClientId, credentials);
-            topics[2] = root + "/management";
-            topics[3] = root + "/asset/+/command";
-            topics[4] = root + "/asset/+/management";
+            string[] topics = new string[3];
+            string root = string.Format("client/{0}/in/device/{1}", credentials.ClientId, deviceId);
+            topics[0] = root + "/management";
+            topics[1] = root + "/asset/+/command";
+            topics[2] = root + "/asset/+/management";
             return topics;
         }
 
@@ -724,11 +724,19 @@ namespace att.iot.client
         {
             try
             {
-                string content = string.Format("{{ 'description' : {0}, 'name' : '{1}' }}", name, description);
+                string content = string.Format("{{ 'description' : '{0}', 'name' : '{1}' }}", name, description);
 
                 HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Put, "Device/" + deviceId);
-                request.Headers.Add("Auth-GatewayKey", credentials.ClientKey);
-                request.Headers.Add("Auth-GatewayId", credentials.GatewayId);
+                if (string.IsNullOrEmpty(credentials.GatewayId) == false)
+                {
+                    request.Headers.Add("Auth-GatewayKey", credentials.ClientKey);
+                    request.Headers.Add("Auth-GatewayId", credentials.GatewayId);
+                }
+                else
+                {
+                    request.Headers.Add("Auth-ClientKey", credentials.ClientKey);
+                    request.Headers.Add("Auth-ClientId", credentials.ClientId);
+                }
                 request.Content = new StringContent(content, Encoding.UTF8, "application/json");
                 var task = _http.SendAsync(request, HttpCompletionOption.ResponseContentRead);
                 using (var result = task.Result)
@@ -790,7 +798,7 @@ namespace att.iot.client
                         {
                             JToken obj = JToken.Parse(resultContent);
                             _httpError = false;
-                            return obj["Id"].Value<string>();
+                            return obj["id"].Value<string>();
                         }
                     }
                 }
@@ -865,10 +873,9 @@ namespace att.iot.client
         {
             try
             {
-                string content = string.Format("{{ 'is' : '{0}', 'name' : '{1}', 'description' : '{2}', 'deviceId': '{3}', 'profile' : {{ 'type' : '{4}' }}}}", isActuator == true? "actuator": "sensor", name, description, deviceId, type);
+                string content = string.Format("{{ \"is\" : \"{0}\", \"name\" : \"{1}\", \"description\" : \"{2}\", \"deviceId\": \"{3}\", \"profile\" : {{ \"type\" : \"{4}\" }}}}", isActuator == true ? "actuator" : "sensor", name, description, deviceId, type);
                 TopicPath path = new TopicPath()
                 {
-                    Gateway = string.IsNullOrEmpty(credentials.GatewayId) == false ? credentials.GatewayId : credentials.ClientId,
                     DeviceId = deviceId,
                     AssetId = new int[] { assetId }
                 };
