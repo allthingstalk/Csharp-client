@@ -11,7 +11,8 @@
     <iconUrl>https://github.com/allthingstalk/Csharp-client/blob/master/logo_badge_50x50.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>Initial release.</releaseNotes>
+    <releaseNotes>Removes dependency on nlog, adds demo application to source, adds function calls to create devices not connected to a gateway.
+	.</releaseNotes>
     <copyright>Copyright 2015</copyright>
     <tags>AllThingsTalk IOT pubsub M2M embedded</tags>
   </metadata>
