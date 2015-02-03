@@ -21,7 +21,6 @@ Depends on:
 
 - [Newtonsoft.json](https://www.nuget.org/packages/Newtonsoft.Json/) for working with Json data.
 - [Lumenworkds.framework.io](https://www.nuget.org/packages/LumenWorks.Framework.IO/) for properly reading csv formatted data.
-- [nlog](http://nlog-project.org/) for advanced logging
 - [m2mqtt](https://m2mqtt.codeplex.com/) mqtt library for pub-sub communication.
 
 ## installation
@@ -102,3 +101,56 @@ You can retrieve values from the object by calling the appropriate 'AsXXX' funct
 
 The library has been created so that it can potentially work with multiple gateways, which is why you always have to supply the gatewayId in the TopicPath.  
 Asset values can be sent as json objects or as string values.
+
+### full demo app
+The following application will create a new device, add 2 assets to it and will wait for an incomming asset command or until you press a key upon which it will send an asset value to the cloud.  
+The 'MyLogger' object that is used, is a interface implementation that simply writes the text to the console screen (Console.WriteLn)
+
+    class Program
+    {
+        static IServer _server;
+        static GatewayCredentials credentials = new GatewayCredentials() { ClientKey = "your client key", ClientId = "your client id" };
+        static string _deviceId;
+        static MyLogger _logger;
+
+
+        static void Main(string[] args)
+        {
+            Init();
+            bool success;
+            if (string.IsNullOrEmpty(_deviceId) == true)
+            {
+                _deviceId = _server.CreateDevice(credentials, "C# test device", "a device created from my test script");
+                success = !string.IsNullOrEmpty(_deviceId);
+            }
+            else
+                success = _server.UpdateDevice(credentials, _deviceId, "C# test device", "a device created from my test script");
+            if (success)
+            {
+                _server.UpdateAsset(credentials, _deviceId, 1, "test actuator", "a test actuator", true, "bool");
+                _server.UpdateAsset(credentials, _deviceId, 2, "test sensor", "a test sensor", false, "bool");
+
+                _server.SubscribeToTopics(credentials, _deviceId);
+
+                TopicPath path = new TopicPath() { ClientId = credentials.ClientId, DeviceId = _deviceId, AssetIdStr = "2" };
+
+                Console.ReadKey();                                          //wait to continue so that we can send a value from the cloud to the app.
+
+                _server.AssetValue(path, "true");
+            }
+        }
+
+        private static void Init()
+        {
+            _logger = new MyLogger();
+            _server = new Server(_logger);
+            _server.Init(ConfigurationManager.AppSettings);
+            _server.ActuatorValue += _server_ActuatorValue;
+        }
+
+        private static void _server_ActuatorValue(object sender, ActuatorData e)
+        {
+            if (e.Path.AssetId[0] == 1)
+                _logger.Trace("incomming value found: {0}", e.AsBool(0));
+        }
+    }
