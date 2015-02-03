@@ -165,12 +165,12 @@ namespace att.iot.client
 
         /// <summary>
         /// Simple way to create or update an asset.
-        /// Works for assets that belong to stand alone devices or devices connected to a gateway.
-        /// When there is no gateway defined, don't fill in the property in the credentials
         /// For mor advanced features, use <see cref="IServer.UpdateAsset" />
         /// </summary>
         /// <param name="credentials">The credentials for the gateway and client.</param>
-        /// <param name="deviceId">The device identifier (local).</param>
+        /// <param name="deviceId">The device identifier. If there is no gateway defined, this has to be the device id as specified by cloudapp. If
+        /// There is a gateway known, the id of the device can be local to the gateway.
+        /// </param>
         /// <param name="assetId">The asset identifier (local).</param>
         /// <param name="name">The name of the asset.</param>
         /// <param name="description">The description.</param>
