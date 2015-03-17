@@ -136,7 +136,7 @@ namespace att.iot.client
         }
 
         /// <summary>
-        /// walks over all the ziprs and subscribes to the topics.
+        /// walks over all the gateways and subscribes to the topics.
         /// </summary>
         /// <param name="toSubscribe">The list of credentials to supscribe for</param>
         public void RegisterGateways(IEnumerable<GatewayCredentials> toSubscribe)
@@ -500,7 +500,7 @@ namespace att.iot.client
                     if (result.StatusCode == HttpStatusCode.Unauthorized)                                           //not a success code, but very common, special case, don't treat as comm problem.
                     {
                         if (_logger != null)
-                            _logger.Error("Unauthorised request for gateway details: {0}, zipr: {1}", credentials.GatewayId, credentials.UId);
+                            _logger.Error("Unauthorised request for gateway details: {0}, UID: {1}", credentials.GatewayId, credentials.UId);
                         return null;
                     }
                     result.EnsureSuccessStatusCode();
@@ -542,7 +542,7 @@ namespace att.iot.client
         {
             try
             {
-                //HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Put, "api/GatewayEnroll?id=" + credentials.ZiprId);
+                //HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Put, "api/GatewayEnroll?id=" + credentials.UIDId);
                 //var task = _http.SendAsync(request, HttpCompletionOption.ResponseContentRead);
 
                 HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "Gateway");
@@ -566,7 +566,7 @@ namespace att.iot.client
                             if(client != null)
                                 credentials.ClientId = client["clientId"].Value<string>();
                             if (_logger != null)
-                                _logger.Trace("credentials found. zipr Id: {0}, gateway id: {1}, key: {2}", credentials.UId, credentials.GatewayId, credentials.ClientKey);
+                                _logger.Trace("credentials found. UID Id: {0}, gateway id: {1}, key: {2}", credentials.UId, credentials.GatewayId, credentials.ClientKey);
                             return true;
                         }
                     }
@@ -583,7 +583,7 @@ namespace att.iot.client
         }
 
         /// <summary>
-        /// Authenticates the zipr with the specified credentials.
+        /// Authenticates the gateway with the specified credentials.
         /// </summary>
         /// <param name="id">The credentials for the gateway and client.</param>
         /// <returns>True if succesful</returns>
@@ -602,13 +602,13 @@ namespace att.iot.client
                     if (result.IsSuccessStatusCode)
                     {
                         if (_logger != null)
-                            _logger.Trace("gateway authenticated. zipr Id: {0}, gateway id: {1}, key: {2}", credentials.UId, credentials.GatewayId, credentials.ClientKey);
+                            _logger.Trace("gateway authenticated. UID: {0}, gateway id: {1}, key: {2}", credentials.UId, credentials.GatewayId, credentials.ClientKey);
                         return true;
                     }
                     else
                     {
                         if (_logger != null)
-                            _logger.Error("gateway failed to authenticate. zipr Id: {0}, gateway id: {1}, key: {2}", credentials.UId, credentials.GatewayId, credentials.ClientKey);
+                            _logger.Error("gateway failed to authenticate. UID Id: {0}, gateway id: {1}, key: {2}", credentials.UId, credentials.GatewayId, credentials.ClientKey);
                         return false;
                     }
                 }
