@@ -85,7 +85,7 @@ namespace att.iot.client
         {
             _mqtt = new MqttClient(GetSetting(appSettings, "broker address", "broker.smartliving.io"));
             _mqtt.MqttMsgPublishReceived += client_MqttMsgPublishReceived;
-            _mqtt.MqttMsgDisconnected += client_MqttMsgDisconnected;
+            _mqtt.ConnectionClosed += client_MqttMsgDisconnected;
             string clientId = Guid.NewGuid().ToString().Substring(0, 22);                   //need to respect the max id of mqtt.
             _mqttUserName = GetSetting(appSettings, "broker userName", "");
             _mqttpwd = GetSetting(appSettings, "broker pwd", "");
