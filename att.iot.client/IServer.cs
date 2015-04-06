@@ -196,6 +196,14 @@ namespace att.iot.client
         void AssetValue(TopicPath asset, object value);
 
         /// <summary>
+        /// sends the asset value to the server.
+        /// </summary>
+        /// <param name="credentials">The credentials to authenticate with in the platform.</param>
+        /// <param name="asset">The asset id (remote, what the server uses).</param>
+        /// <param name="value">The value, either a string with a single value or a json object with multiple values.</param>
+        void SendAssetValueHTTP(GatewayCredentials credentials, string asset, object value);
+
+        /// <summary>
         /// Reports an error back to the cloudapp for the user that owns the specified id.
         /// </summary>
         /// <param name="id">The credentials for the gateway and client.</param>
