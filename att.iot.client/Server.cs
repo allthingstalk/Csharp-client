@@ -879,7 +879,7 @@ namespace att.iot.client
                 string content;
 
                 if (type.StartsWith("{"))                                           //check if it's a complex type, if so, don't add "" between type info
-                    content = string.Format("{{ \"is\" : \"{0}\", \"name\" : \"{1}\", \"description\" : \"{2}\", \"deviceId\": \"{3}\", \"profile\" : {{ \"type\" : {4} }}}}", isActuator == true ? "actuator" : "sensor", name, description, deviceId, type);
+                    content = string.Format("{{ \"is\" : \"{0}\", \"name\" : \"{1}\", \"description\" : \"{2}\", \"deviceId\": \"{3}\", \"profile\" : {4} }}", isActuator == true ? "actuator" : "sensor", name, description, deviceId, type);
                 else
                     content = string.Format("{{ \"is\" : \"{0}\", \"name\" : \"{1}\", \"description\" : \"{2}\", \"deviceId\": \"{3}\", \"profile\" : {{ \"type\" : \"{4}\" }}}}", isActuator == true ? "actuator" : "sensor", name, description, deviceId, type);
 
