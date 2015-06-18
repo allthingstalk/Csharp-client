@@ -772,11 +772,11 @@ namespace att.iot.client
         /// <param name="credentials">The credentials for the gateway and client.</param>
         /// <param name="name">The name.</param>
         /// <param name="description">The description.</param>
+        /// <param name="activityEnabled">if set to <c>true</c> historical data will be stored for the device, otherwise it wont.</param>
         /// <returns>
-
         /// The device identifier as known by the cloudapp
         /// </returns>
-        public string CreateDevice(GatewayCredentials credentials, string name, string description)
+        public string CreateDevice(GatewayCredentials credentials, string name, string description, bool activityEnabled = false)
         {
             try
             {

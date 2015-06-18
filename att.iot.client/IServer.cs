@@ -141,18 +141,20 @@ namespace att.iot.client
 
 
         /// <summary>
-        /// Simple way to update an devce. 
+        /// Simple way to update an devce.
         /// Works for assets that belong to stand alone devices or devices connected to a gateway.
         /// When there is no gateway defined, don't fill in the property in the credentials
-        /// For mor advanced features, use <see cref="IServer.UpdateDevice"/>
+        /// For mor advanced features, use 
+        /// <see cref="IServer.UpdateDevice" />
         /// </summary>
         /// <param name="credentials">The credentials for the gateway and client.</param>
         /// <param name="name">The name.</param>
         /// <param name="description">The description.</param>
+        /// <param name="activityEnabled">if set to <c>true</c> historical data will be stored for the device, otherwise it wont.</param>
         /// <returns>
         /// The device identifier as known by the cloudapp
         /// </returns>
-        string CreateDevice(GatewayCredentials credentials, string name, string description);
+        string CreateDevice(GatewayCredentials credentials, string name, string description, bool activityEnabled = false);
 
         /// <summary>
         /// Updates or creates the asset.
