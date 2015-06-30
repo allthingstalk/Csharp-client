@@ -142,10 +142,11 @@ namespace att.iot.client
 
 
         /// <summary>
-        /// Simple way to update an devce. 
+        /// Simple way to update an devce.
         /// Works for assets that belong to stand alone devices or devices connected to a gateway.
         /// When there is no gateway defined, don't fill in the property in the credentials
-        /// For mor advanced features, use <see cref="IServer.UpdateDevice"/>
+        /// For mor advanced features, use 
+        /// <see cref="IServer.UpdateDevice" />
         /// </summary>
         /// <param name="credentials">The credentials for the gateway and client.</param>
         /// <param name="name">The name.</param>
