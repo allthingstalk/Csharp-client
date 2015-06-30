@@ -134,10 +134,11 @@ namespace att.iot.client
         /// <param name="deviceId">The device identifier as known by the cloudapp (no local id.</param>
         /// <param name="name">The name.</param>
         /// <param name="description">The description.</param>
+        /// <param name="activityEnabled">if set to <c>true</c>, historical data will be stored for all the assets on this device.</param>
         /// <returns>
         /// true when succesfull
         /// </returns>
-        bool UpdateDevice(GatewayCredentials credentials, string deviceId, string name, string description);
+        bool UpdateDevice(GatewayCredentials credentials, string deviceId, string name, string description, bool activityEnabled = false);
 
 
         /// <summary>
@@ -149,10 +150,11 @@ namespace att.iot.client
         /// <param name="credentials">The credentials for the gateway and client.</param>
         /// <param name="name">The name.</param>
         /// <param name="description">The description.</param>
+        /// <param name="activityEnabled">if set to <c>true</c>, historical data will be stored for all the assets on this device.</param>
         /// <returns>
         /// The device identifier as known by the cloudapp
         /// </returns>
-        string CreateDevice(GatewayCredentials credentials, string name, string description);
+        string CreateDevice(GatewayCredentials credentials, string name, string description, bool activityEnabled = false);
 
         /// <summary>
         /// Updates or creates the asset.

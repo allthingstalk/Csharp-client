@@ -120,7 +120,17 @@ namespace att.iot.client
                 _logger.Error("mqtt connection lost, recreating...");
             string clientId = Guid.NewGuid().ToString();
             while (_mqtt.IsConnected == false)
-                _mqtt.Connect(clientId, _mqttUserName, _mqttpwd);
+            {
+                try
+                {
+                    _mqtt.Connect(clientId, _mqttUserName, _mqttpwd);
+                }
+                catch (Exception ex)
+                {
+                    if (_logger != null)
+                        _logger.Error(ex.Message);
+                }
+            }
             if (_logger != null)
                 _logger.Trace("mqtt connection recreated, resubscribing...");
             OnConnectionReset();
@@ -723,24 +733,24 @@ namespace att.iot.client
         }
 
         /// <summary>
-        /// Simple way to update an devce. 
+        /// Simple way to update an devce.
         /// Works for assets that belong to stand alone devices or devices connected to a gateway.
         /// When there is no gateway defined, don't fill in the property in the credentials
-        /// For mor advanced features, use <see cref="IServer.UpdateDevice"/>
+        /// For mor advanced features, use <see cref="IServer.UpdateDevice" />
         /// </summary>
-        
-        /// <param name="credentials">The credentials for the gateway and client.</param> 
+        /// <param name="credentials">The credentials for the gateway and client.</param>
         /// <param name="deviceId">The device identifier as known by the cloudapp (no local id.</param>
         /// <param name="name">The name.</param>
         /// <param name="description">The description.</param>
+        /// <param name="activityEnabled">if set to <c>true</c>, historical data will be stored for all the assets on this device.</param>
         /// <returns>
-        /// True if successful, otherwise false        
+        /// True if successful, otherwise false
         /// </returns>
-        public bool UpdateDevice(GatewayCredentials credentials, string deviceId, string name, string description)
+        public bool UpdateDevice(GatewayCredentials credentials, string deviceId, string name, string description, bool activityEnabled = false)
         {
             try
             {
-                string content = string.Format("{{ 'description' : '{0}', 'name' : '{1}' }}", name, description);
+                string content = string.Format("{{ 'description': '{0}', 'name': '{1}', 'activityEnabled': {2}}}", name, description, activityEnabled);
 
                 HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Put, "Device/" + deviceId);
                 PrepareRequestForAuth(request, credentials);
@@ -772,15 +782,15 @@ namespace att.iot.client
         /// <param name="credentials">The credentials for the gateway and client.</param>
         /// <param name="name">The name.</param>
         /// <param name="description">The description.</param>
+        /// <param name="activityEnabled">if set to <c>true</c>, historical data will be stored for all the assets on this device.</param>
         /// <returns>
-
         /// The device identifier as known by the cloudapp
         /// </returns>
-        public string CreateDevice(GatewayCredentials credentials, string name, string description)
+        public string CreateDevice(GatewayCredentials credentials, string name, string description, bool activityEnabled = false)
         {
             try
             {
-                string content = string.Format(@"{{ 'description' : '{0}', 'name' : '{1}' }}", name, description);
+                string content = string.Format(@"{{ 'description' : '{0}', 'name' : '{1}', 'activityEnabled': {2} }}", name, description, activityEnabled);
 
                 HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "Device");
                 PrepareRequestForAuth(request, credentials);
@@ -879,7 +889,7 @@ namespace att.iot.client
                 string content;
 
                 if (type.StartsWith("{"))                                           //check if it's a complex type, if so, don't add "" between type info
-                    content = string.Format("{{ \"is\" : \"{0}\", \"name\" : \"{1}\", \"description\" : \"{2}\", \"deviceId\": \"{3}\", \"profile\" : {{ \"type\" : {4} }}}}", isActuator == true ? "actuator" : "sensor", name, description, deviceId, type);
+                    content = string.Format("{{ \"is\" : \"{0}\", \"name\" : \"{1}\", \"description\" : \"{2}\", \"deviceId\": \"{3}\", \"profile\" : {4} }}", isActuator == true ? "actuator" : "sensor", name, description, deviceId, type);
                 else
                     content = string.Format("{{ \"is\" : \"{0}\", \"name\" : \"{1}\", \"description\" : \"{2}\", \"deviceId\": \"{3}\", \"profile\" : {{ \"type\" : \"{4}\" }}}}", isActuator == true ? "actuator" : "sensor", name, description, deviceId, type);
 

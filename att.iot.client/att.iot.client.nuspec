@@ -11,8 +11,8 @@
     <iconUrl>https://github.com/allthingstalk/Csharp-client/blob/master/logo_badge_50x50.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>Updates to support the latest version of mqtt library</releaseNotes>
+    <releaseNotes>Adds 'activityEnabled' flag to CreateDevice and UpdateDevice. Improves stability of mqtt connection.</releaseNotes>
     <copyright>Copyright 2015</copyright>
-    <tags>AllThingsTalk IOT pubsub M2M embedded</tags>
+    <tags>AllThingsTalk IOT pubsub M2M embedded RPI MinnowBoard Galileo Arduino embedded</tags>
   </metadata>
 </package>
