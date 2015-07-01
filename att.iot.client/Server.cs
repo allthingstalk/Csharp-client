@@ -1058,29 +1058,37 @@ namespace att.iot.client
                 throw new ArgumentException("variable 'values': Jarray or JObject expected");
         }
 
-        public void SendAssetValueHTTP(GatewayCredentials credentials, string asset, object value)
+        /// <summary>
+        /// sends the asset value to the server.
+        /// </summary>
+        /// <param name="credentials">The credentials to authenticate with in the platform.</param>
+        /// <param name="asset">The asset id (remote, what the server uses). Define it as a topic path, which includes all relevant components</param>
+        /// <param name="value">The value, either a string with a single value or a json object with multiple values.</param>
+        public void SendAssetValueHTTP(GatewayCredentials credentials, TopicPath asset, object value)
         {
             string toSend = PrepareValueForSendingHTTP(value);
             try
             {
-                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Put, "asset/" + asset  + "/state");
+                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Put, "asset/" + asset.RemoteAssetId + "/state");
                 PrepareRequestForAuth(request, credentials);
                 request.Content = new StringContent(toSend, Encoding.UTF8, "application/json");
                 var task = _http.SendAsync(request, HttpCompletionOption.ResponseContentRead);
                 using (var result = task.Result)
                     result.EnsureSuccessStatusCode();
                 _httpError = false;
+                if (_logger != null)
+                    _logger.Trace("message send over http, to: {0}, content: {1}", asset, toSend);
             }
             catch (Exception e)
             {
                 _httpError = true;
                 if (_httpError == false && _logger != null)
                     _logger.Error("HTTP comm problem: {0}", e.ToString());
-                else if(_logger == null)
+                if (_logger != null)
+                    _logger.Error("failed to send message over http, to: {0}, content: {1}", asset, toSend);
+                else if (_logger == null)
                     throw;
             }
-            if (_logger != null)
-                _logger.Trace("message send over http, to: {0}, content: {1}", asset, toSend);
         }
 
         private string PrepareValueForSendingHTTP(object value)
