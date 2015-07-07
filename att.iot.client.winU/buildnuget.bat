@@ -1,0 +1,1 @@
+nuget pack att.iot.client.winU.ARM.csproj -IncludeReferencedProjects -Prop Configuration=Release
