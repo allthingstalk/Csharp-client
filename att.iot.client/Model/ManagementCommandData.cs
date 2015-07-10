@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace att.iot.client
 {
-    public class ManagementCommandData
+    public class AssetManagementCommandData
     {
-        public TopicPath Path { get; set; }
+        public int Asset { get; set; }
 
         /// <summary>
         /// Gets or sets the command name.

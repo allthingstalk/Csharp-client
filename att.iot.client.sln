@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "att.iot.client", "att.iot.c
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "demoApp", "demoApp\demoApp.csproj", "{1B553484-68A5-48B1-87F6-47905B112455}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "att.iot.client.winU.ARM", "att.iot.client.winU\att.iot.client.winU.ARM.csproj", "{B296F217-8DFF-426E-B63C-E858A63E1421}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "att.iot.client.winU", "att.iot.client.winU\att.iot.client.winU.csproj", "{B296F217-8DFF-426E-B63C-E858A63E1421}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

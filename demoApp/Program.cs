@@ -45,7 +45,7 @@ namespace demoApp
         private static void Init()
         {
             _logger = new MyLogger();
-            _server = new Server(_logger);
+            _server = new Device(_logger);
             _server.Init(ConfigurationManager.AppSettings);
             _server.ActuatorValue += _server_ActuatorValue;
         }

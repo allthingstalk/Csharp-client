@@ -11,22 +11,29 @@ namespace att.iot.client
     /// <summary>
     /// provides access to the backing IOT server system. It allows us to save data and receive messages from the cloudapp.
     /// </summary>
-    public interface IServer
+    public interface IDevice
     {
         /// <summary>
         /// Occurs when a new actuator value arrived.
         /// </summary>
-        event EventHandler<ActuatorData> ActuatorValue;
+        event EventHandler<string> ActuatorValue;
+
+        event EventHandler<JToken> ActuatorValueJson;
 
 
         /// <summary>
         /// Occurs when a management command arrived.
         /// </summary>
-        event EventHandler<ManagementCommandData> ManagementCommand;
+        event EventHandler<AssetManagementCommandData> AssetManagementCommand;
+
+        /// <summary>
+        /// Occurs when a management command arrived.
+        /// </summary>
+        event EventHandler<string> DeviceManagementCommand;
 
         /// <summary>
         /// Occurs when the mqtt connection was reset and recreated. This allows the application to recreate the subscriptions.
-        /// You can use <see cref="Server.RegisterGateways"/> for this.
+        /// You can use <see cref="Device.RegisterGateways"/> for this.
         /// </summary>
         event EventHandler ConnectionReset;
 
@@ -58,19 +65,7 @@ namespace att.iot.client
         /// </returns>
         bool FinishClaim(GatewayCredentials credentials, JObject definition);
 
-        /// <summary>
-        /// Gets the gateway with the specified id. Note: this does not use the UID, but the ATT generated id.
-        /// </summary>
-        /// <param name="id">The credentials for the gateway.</param>
-        /// <returns>a jobject containing the gateway definition</returns>
-        JObject GetGateway(GatewayCredentials credentials);
-
-        /// <summary>
-        /// makes certain that the specified gateway is monitored so that we receive incomming mqtt messages for the specified gateway.
-        /// Use this if there is a gateway available.
-        /// </summary>
-        /// <param name="id">The credentials for the gateway and client.</param>
-        void SubscribeToTopics(GatewayCredentials credentials);
+     
 
         /// <summary>
         /// makes certain that the specified device is monitored so that we receive incomming mqtt messages for the specified device.

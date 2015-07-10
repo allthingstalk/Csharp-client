@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace att.iot.client
 {
     /// <summary>
-    /// Implement this interface so that the <see cref="Server"/> class can log trace, info, warning and error messages to the desired output.
+    /// Implement this interface so that the <see cref="Device"/> class can log trace, info, warning and error messages to the desired output.
     /// </summary>
     public interface ILogger
     {
