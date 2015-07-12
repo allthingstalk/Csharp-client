@@ -22,12 +22,12 @@ namespace att.iot.client
 
 
         /// <summary>
-        /// Occurs when a management command arrived.
+        /// Occurs when a management command arrived for an asset.
         /// </summary>
         event EventHandler<AssetManagementCommandData> AssetManagementCommand;
 
         /// <summary>
-        /// Occurs when a management command arrived.
+        /// Occurs when a management command arrived for a device.
         /// </summary>
         event EventHandler<string> DeviceManagementCommand;
 
@@ -35,89 +35,27 @@ namespace att.iot.client
         /// Occurs when the mqtt connection was reset and recreated. This allows the application to recreate the subscriptions.
         /// You can use <see cref="Device.RegisterGateways"/> for this.
         /// </summary>
-        event EventHandler ConnectionReset;
-
-        /// <summary>
-        /// Creates a new gateway.
-        /// </summary>
-        /// <param name="id">a token that uniquely identifies the gateway.</param>
-        /// <param name="ipAddress">The ip address of the gateway, so we can use this in logs.</param>
-        /// <param name="data">The data object that defines the gateway.</param>
-        /// <returns></returns>
-        bool CreateGateway(string id, byte[] ipAddress, JObject data);
-
-        /// <summary>
-        /// Updates 1 or more properties of the gateway.
-        /// </summary>
-        /// <param name="id">The credentials for the gateway and client.</param>
-        /// <param name="content">The gateway definition as a JObject.</param>
-        void UpdateGateway(GatewayCredentials credentials, JObject content);
-
-        /// <summary>
-        /// Gets the gateway credentials from the server. This only works if the <see cref="GatewayCredentials.UId" /> is already filled in.
-        /// This function will fill in the other fields.
-        /// Logs an error if the object was not found.
-        /// </summary>
-        /// <param name="id">The credentials for the gateway and client.</param>
-        /// <param name="definition">The definition of the gateway that needs to be udpated.</param>
-        /// <returns>
-        /// True if the operation was successful.
-        /// </returns>
-        bool FinishClaim(GatewayCredentials credentials, JObject definition);
-
-     
-
-        /// <summary>
-        /// makes certain that the specified device is monitored so that we receive incomming mqtt messages for the specified device.
-        /// Use this if there is only a device available but no gateway.
-        /// </summary>
-        /// <param name="credentials">The credentials.</param>
-        /// <param name="deviceId">The device identifier (local) to be monitored.</param>
-        void SubscribeToTopics(GatewayCredentials credentials, string deviceId);
-
-        /// <summary>
-        /// walks over all the ziprs and subscribes to the topics.
-        /// </summary>
-        /// <param name="toSubscribe">The list of credentials to supscribe for</param>
-        void RegisterGateways(IEnumerable<GatewayCredentials> toSubscribe);
-
-        /// <summary>
-        /// removes the monitors for the specified gateway, so we no longer receive mqtt messages for it.
-        /// Use this only if there is a gateway defined.
-        /// </summary>
-        /// <param name="id">The credentials for the gateway and client.</param>
-        void UnRegisterGateway(GatewayCredentials credentials);
-
-        /// <summary>
-        /// removes the monitors for the specified device, so we no longer receive mqtt messages for it.
-        /// Use this only if there is no gateway defined.
-        /// </summary>
-        /// <param name="id">The credentials for the gateway and client.</param>
-        void UnRegisterDevice(GatewayCredentials credentials, string deviceId);
+        event EventHandler ConnectionReset;    
 
         /// <summary>
         /// Updates or creates the device.
         /// </summary>
-        /// <param name="credentials">The credentials for the gateway and client.</param>
-        /// <param name="device">The device identifier (cloud platform version, not local).</param>
         /// <param name="content">The device definition as a json object.</param>
         /// <param name="extraHeaders">any optional extra headers that should be included in the message.</param>
         /// <returns>
         /// True if successful, otherwise false
         /// </returns>
-        bool UpdateDevice(GatewayCredentials credentials, string device, JObject content, Dictionary<string, string> extraHeaders = null);
+        bool UpdateDevice(JObject content, Dictionary<string, string> extraHeaders = null);
 
         /// <summary>
         /// Updates or creates the device.
         /// </summary>
-        /// <param name="credentials">The credentials for the gateway and client.</param>
-        /// <param name="device">The device identifier (cloud platform version, not local).</param>
         /// <param name="content">The device definition as a string (json format).</param>
         /// <param name="extraHeaders">any optional extra headers that should be included in the message.</param>
         /// <returns>
         /// True if successful, otherwise false
         /// </returns>
-        bool UpdateDevice(GatewayCredentials credentials, string device, string content, Dictionary<string, string> extraHeaders = null);
+        bool UpdateDevice(string content, Dictionary<string, string> extraHeaders = null);
 
         /// <summary>
         /// Simple way to create or update a devce. 
@@ -125,15 +63,13 @@ namespace att.iot.client
         /// When there is no gateway defined, don't fill in the property in the credentials
         /// For mor advanced features, use <see cref="IServer.UpdateDevice"/>
         /// </summary>
-        /// <param name="credentials">The credentials for the gateway and client.</param>
-        /// <param name="deviceId">The device identifier as known by the cloudapp (no local id.</param>
         /// <param name="name">The name.</param>
         /// <param name="description">The description.</param>
         /// <param name="activityEnabled">if set to <c>true</c>, historical data will be stored for all the assets on this device.</param>
         /// <returns>
         /// true when succesfull
         /// </returns>
-        bool UpdateDevice(GatewayCredentials credentials, string deviceId, string name, string description, bool activityEnabled = false);
+        bool UpdateDevice(string name, string description, bool activityEnabled = false);
 
 
         /// <summary>
@@ -148,27 +84,22 @@ namespace att.iot.client
         /// <param name="description">The description.</param>
         /// <param name="activityEnabled">if set to <c>true</c>, historical data will be stored for all the assets on this device.</param>
         /// <returns>
-        /// The device identifier as known by the cloudapp
+        /// True if successful, otherwise false
         /// </returns>
-        string CreateDevice(GatewayCredentials credentials, string name, string description, bool activityEnabled = false);
+        bool CreateDevice(string name, string description, bool activityEnabled = false);
 
         /// <summary>
         /// Updates or creates the asset.
         /// </summary>
-        /// <param name="id">The credentials for the gateway and client.</param>
-        /// <param name="asset">The id of the asset (global, cloud version, not local).</param>
+        /// <param name="asset">The id of the asset.</param>
         /// <param name="content">The content of the asset as a JObject.</param>
         /// <param name="extraHeaders">any optional extra headers that should be included in the message.</param>
-        void UpdateAsset(GatewayCredentials credentials, string asset, JObject content, Dictionary<string, string> extraHeaders = null);
+        void UpdateAsset(int asset, JObject content, Dictionary<string, string> extraHeaders = null);
 
         /// <summary>
         /// Simple way to create or update an asset.
         /// For mor advanced features, use <see cref="IServer.UpdateAsset" />
         /// </summary>
-        /// <param name="credentials">The credentials for the gateway and client.</param>
-        /// <param name="deviceId">The device identifier. If there is no gateway defined, this has to be the device id as specified by cloudapp. If
-        /// There is a gateway known, the id of the device can be local to the gateway.
-        /// </param>
         /// <param name="assetId">The asset identifier (local).</param>
         /// <param name="name">The name of the asset.</param>
         /// <param name="description">The description.</param>
@@ -177,21 +108,19 @@ namespace att.iot.client
         /// <returns>
         /// True if successful, otherwise false
         /// </returns>
-        bool UpdateAsset(GatewayCredentials credentials, string deviceId, int assetId, string name, string description, bool isActuator, string type);
+        bool UpdateAsset(int assetId, string name, string description, bool isActuator, string type);
 
         /// <summary>
         /// Deletes the device.
         /// </summary>
-        /// <param name="id">The credentials for the gateway and client.</param>
-        /// <param name="device">The global device id (not the local nr).</param>
-        void DeleteDevice(GatewayCredentials credentials, string device);
+        void DeleteDevice();
 
         /// <summary>
         /// sends the asset value to the server.
         /// </summary>
         /// <param name="asset">The asset.</param>
         /// <param name="value">The value, either a string witha single value or a json object with multiple values.</param>
-        void AssetValue(TopicPath asset, object value);
+        void Send(int asset, object value);
 
         /// <summary>
         /// sends the asset value to the server.

@@ -212,16 +212,20 @@ namespace att.iot.client
         {
             if (ActuatorValue != null)
             {
-                ActuatorData data;
                 string val = System.Text.Encoding.UTF8.GetString(e.Message);
                 if (val[0] == '{')
-                    data = new JsonActuatorData();
+                {
+                    var value = JToken.Parse(val);
+                    ActuatorValueJson(this, value);
+                }
                 else
-                    data = new CsvActuatorData();
-                data.Load(val);
-                data.Path = path;
-                ActuatorValue(this, data);                                                                          //even if there is no data, the event has to be raised.
+                    ActuatorValue(this, val);
             }
+        }
+
+        string getTopicPath(int assetId)
+        {
+            return string.Format("client/{0}/out/asset/{1}_{2}/state", _clientId, DeviceId, assetId);
         }
 
         /// <summary>
@@ -230,10 +234,10 @@ namespace att.iot.client
         /// <param name="asset">The asset.</param>
         /// <param name="value">The value.</param>
         /// <exception cref="System.NotImplementedException"></exception>
-        public void AssetValue(TopicPath asset, object value)
+        public void Send(int asset, object value)
         {
             string toSend = PrepareValueForSending(value);           
-            string topic = asset.ToString();
+            string topic = getTopicPath(asset);
             lock (_mqtt)                                                               //make certain that the messages sent by different threads at the same time, don't intermingle.
             {
                 _mqtt.Publish(topic, System.Text.Encoding.UTF8.GetBytes(toSend));
@@ -445,7 +449,7 @@ namespace att.iot.client
         /// <param name="description">The description.</param>
         /// <param name="activityEnabled">if set to <c>true</c>, historical data will be stored for all the assets on this device.</param>
         /// <returns>
-        /// The device identifier as known by the cloudapp
+        /// True if successful, otherwise false
         /// </returns>
         public bool CreateDevice(string name, string description, bool activityEnabled = false)
         {
@@ -496,7 +500,6 @@ namespace att.iot.client
         /// <summary>
         /// Updates or creates the asset.
         /// </summary>
-        /// <param name="id">The credentials for the gateway and client.</param>
         /// <param name="asset">The id of the asset.</param>
         /// <param name="content">The content of the asset as a JObject.</param>
         /// <param name="extraHeaders">any optional extra headers that should be included in the message.</param>
@@ -534,10 +537,6 @@ namespace att.iot.client
         /// Simple way to create or update an asset.
         /// For mor advanced features, use <see cref="IServer.UpdateAsset" />
         /// </summary>
-        /// <param name="credentials">The credentials for the gateway and client.</param>
-        /// <param name="deviceId">The device identifier. If there is no gateway defined, this has to be the device id as specified by cloudapp. If
-        /// There is a gateway known, the id of the device can be local to the gateway.
-        /// </param>
         /// <param name="assetId">The asset identifier (local).</param>
         /// <param name="name">The name of the asset.</param>
         /// <param name="description">The description.</param>
@@ -589,8 +588,6 @@ namespace att.iot.client
         /// <summary>
         /// Deletes the device.
         /// </summary>
-        /// <param name="id">The credentials for the gateway and client.</param>
-        /// <param name="device">The global device id (not the local nr).</param>
         public void DeleteDevice()
         {
             if (string.IsNullOrEmpty(DeviceId)) throw new Exception("Device id not set");
