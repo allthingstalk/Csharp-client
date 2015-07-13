@@ -29,7 +29,7 @@ namespace att.iot.client
             double val;
             if (double.TryParse(_value, out val) == true)
                 return val;
-            throw new InvalidCastException(string.Format("Expected double value at position {0}", index));
+            throw new InvalidCastException(string.Format("Expected double value"));
         }
 
 
@@ -38,7 +38,7 @@ namespace att.iot.client
             bool val;
             if (bool.TryParse(_value, out val) == true)
                 return val;
-            throw new InvalidCastException(string.Format("Expected bool value at position {0}", index));
+            throw new InvalidCastException(string.Format("Expected bool value"));
         }
 
         public int AsInt()
@@ -46,7 +46,7 @@ namespace att.iot.client
             int val;
             if (int.TryParse(_value, out val) == true)
                 return val;
-            throw new InvalidCastException(string.Format("Expected int value at position {0}", index));
+            throw new InvalidCastException(string.Format("Expected int value"));
         }
 
         public DateTime AsDateTime()
@@ -54,7 +54,7 @@ namespace att.iot.client
             DateTime val;
             if (DateTime.TryParse(_value, out val) == true)
                 return val;
-            throw new InvalidCastException(string.Format("Expected DateTime value at position {0}", index));
+            throw new InvalidCastException(string.Format("Expected DateTime value"));
         }
 
 
@@ -63,9 +63,20 @@ namespace att.iot.client
             TimeSpan val;
             if (TimeSpan.TryParse(_value, out val) == true)
                 return val;
-            throw new InvalidCastException(string.Format("Expected TimeSpan value at position {0}", index));
+            throw new InvalidCastException(string.Format("Expected TimeSpan value"));
         }
 
         public string Value { get { return _value; } }
+
+        /// <summary>
+        /// Returns a <see cref="System.String" /> that represents this instance.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="System.String" /> that represents this instance.
+        /// </returns>
+        public override string ToString()
+        {
+            return Value;
+        }
     }
 }

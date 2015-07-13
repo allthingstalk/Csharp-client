@@ -65,7 +65,7 @@
     <Compile Include="Model\StringActuatorData.cs" />
     <Compile Include="Model\JsonActuatorData.cs" />
     <Compile Include="Model\ManagementCommandData.cs" />
-    <Compile Include="IServer.cs" />
+    <Compile Include="IDevice.cs" />
     <Compile Include="Model\TopicPath.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Device.cs" />

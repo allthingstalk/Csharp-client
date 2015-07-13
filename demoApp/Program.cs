@@ -10,50 +10,63 @@ namespace demoApp
 {
     class Program
     {
-        static IServer _server;
-        static GatewayCredentials credentials = new GatewayCredentials() { ClientKey = "your client key", ClientId = "your client id" };
-        static string _deviceId;
+        static Device _device;
         static MyLogger _logger;
+
+        private static void Init()
+        {
+            //provide a logger object
+            _logger = new MyLogger();
+            //create the device object with your account details
+            _device = new Device("your client id", "your client key", _logger);
+            //if the device was already created, load the id from the settings.
+            _device.DeviceId = Properties.Settings.Default["device id"].ToString();
+            _device.ActuatorValue += _device_ActuatorValue;
+        }
+
 
 
         static void Main(string[] args)
         {
             Init();
             bool success;
-            if (string.IsNullOrEmpty(_deviceId) == true)
-            {
-                _deviceId = _server.CreateDevice(credentials, "C# test device", "a device created from my test script");
-                success = !string.IsNullOrEmpty(_deviceId);
-            }
+            //create or update the device in the cloud.
+            if (string.IsNullOrEmpty(_device.DeviceId) == true)
+                success = _device.CreateDevice("C# test device", "a device created from my test script");
             else
-                success = _server.UpdateDevice(credentials, _deviceId, "C# test device", "a device created from my test script");
+                success = _device.UpdateDevice("C# test device", "a device created from my test script");
+
             if (success)
             {
-                _server.UpdateAsset(credentials, _deviceId, 1, "test actuator", "a test actuator", true, "bool");
-                _server.UpdateAsset(credentials, _deviceId, 2, "test sensor", "a test sensor", false, "bool");
+                //store the device id in the settings, so we can reuse it later on.
+                Properties.Settings.Default["device id"] = _device.DeviceId; 
+                Properties.Settings.Default.Save();
 
-                _server.SubscribeToTopics(credentials, _deviceId);
+                //update or create the assets on the device
+                _device.UpdateAsset(1, "test actuator", "a test actuator", true, "bool");
+                _device.UpdateAsset(2, "test sensor", "a test sensor", false, "bool");
 
-                TopicPath path = new TopicPath() { ClientId = credentials.ClientId, DeviceId = _deviceId, AssetIdStr = "2" };
+                //wait to continue so that we can send a value from the cloud to the app.
+                Console.ReadKey();                                          
 
-                Console.ReadKey();                                          //wait to continue so that we can send a value from the cloud to the app.
-
-                _server.AssetValue(path, "true");
+                //send a value to the platform
+                _device.Send(2, "true");
             }
         }
 
-        private static void Init()
+        static void _device_ActuatorValue(object sender, ActuatorData e)
         {
-            _logger = new MyLogger();
-            _server = new Device(_logger);
-            _server.Init(ConfigurationManager.AppSettings);
-            _server.ActuatorValue += _server_ActuatorValue;
-        }
+            _logger.Trace("incomming value found: {0}", e.ToString());
 
-        private static void _server_ActuatorValue(object sender, ActuatorData e)
-        {
-            if (e.Path.AssetId[0] == 1)
-                _logger.Trace("incomming value found: {0}", e.AsBool(0));
+            //check the actuator for which we received a command
+            if (e.Asset == 1)
+            {
+                //actuators can send simple strings or complex json values. 
+                StringActuatorData data = (StringActuatorData)e;
+                //do something with the value
+                if(data.AsBool() == true)
+                    _logger.Trace("actuating sensor");
+            }
         }
     }
 }

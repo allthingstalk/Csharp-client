@@ -14,13 +14,6 @@ using uPLibrary.Networking.M2Mqtt.Messages;
 
 namespace att.iot.client
 {
-    /// <summary>
-    /// a default implementation for the server connection.
-    /// </summary>
-    /// <remarks>
-    /// In case that there are too many threads running due to async tasks, use a custom TaskScheduler to limit the nr of threads.
-    /// For an example, see: http://msdn.microsoft.com/en-us/library/system.threading.tasks.taskscheduler%28v=vs.110%29.aspx
-    /// </remarks>
     public class Device: IDevice, IDisposable
     {
         #region fields
@@ -41,7 +34,7 @@ namespace att.iot.client
         /// <summary>
         /// Initializes a new instance of the <see cref="Device"/> class.
         /// </summary>
-        public Device(string clientId, string clientKey, string apiUri = "", string brokerUri = "broker.smartliving.io", ILogger logger = null)
+        public Device(string clientId, string clientKey, ILogger logger = null, string apiUri = "http://api.smartliving.io", string brokerUri = "broker.smartliving.io")
         {
             _clientId = clientId;
             _clientKey = clientKey;
@@ -63,9 +56,8 @@ namespace att.iot.client
         /// <summary>
         /// Occurs when a new actuator value arrived.
         /// </summary>
-        public event EventHandler<string> ActuatorValue;
+        public event EventHandler<ActuatorData> ActuatorValue;
 
-        public event EventHandler<JToken> ActuatorValueJson;
 
         /// <summary>
         /// Occurs when a management command arrived for an asset.
@@ -157,6 +149,7 @@ namespace att.iot.client
         /// </summary>
         private void OnConnectionReset()
         {
+            SubscribeToTopics();
             if (ConnectionReset != null)
                 ConnectionReset(this, EventArgs.Empty);
         }
@@ -193,14 +186,21 @@ namespace att.iot.client
         /// <param name="e">The <see cref="MqttMsgPublishEventArgs"/> instance containing the event data.</param>
         private void OnManagementCommand(TopicPath path, MqttMsgPublishEventArgs e)
         {
-            if (ManagementCommand != null)
+            if (path.AssetId != null)
             {
-                ManagementCommandData data = new ManagementCommandData();
-                data.Path = path;
-                data.Command = System.Text.Encoding.UTF8.GetString(e.Message);
-                ManagementCommand(this, data);
+                if (AssetManagementCommand != null)
+                {
+                    AssetManagementCommandData data = new AssetManagementCommandData();
+                    data.Asset = path.AssetId[0];
+                    data.Command = System.Text.Encoding.UTF8.GetString(e.Message);
+                    AssetManagementCommand(this, data);
+                }
             }
-
+            else if (DeviceManagementCommand != null)
+            {
+                string command = System.Text.Encoding.UTF8.GetString(e.Message);
+                DeviceManagementCommand(this, command);
+            }
         }
 
         /// <summary>
@@ -213,13 +213,16 @@ namespace att.iot.client
             if (ActuatorValue != null)
             {
                 string val = System.Text.Encoding.UTF8.GetString(e.Message);
+                ActuatorData data = null;
                 if (val[0] == '{')
                 {
-                    var value = JToken.Parse(val);
-                    ActuatorValueJson(this, value);
+                    data = new JsonActuatorData();
                 }
                 else
-                    ActuatorValue(this, val);
+                    data = new StringActuatorData();
+                data.Load(val);
+                data.Asset = path.AssetId[0];
+                ActuatorValue(this, data);
             }
         }
 
@@ -416,7 +419,7 @@ namespace att.iot.client
             if (string.IsNullOrEmpty(DeviceId)) throw new Exception("Device id not set");
             try
             {
-                string content = string.Format("{{ 'description': '{0}', 'name': '{1}', 'activityEnabled': {2}}}", name, description, activityEnabled);
+                string content = string.Format("{{ 'description': '{0}', 'name': '{1}', 'activityEnabled': {2}}}", description, name, activityEnabled.ToString().ToLower());
 
                 HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Put, "Device/" + DeviceId);
                 PrepareRequestForAuth(request);
@@ -455,7 +458,7 @@ namespace att.iot.client
         {
             try
             {
-                string content = string.Format(@"{{ 'description' : '{0}', 'name' : '{1}', 'activityEnabled': {2} }}", name, description, activityEnabled);
+                string content = string.Format(@"{{ 'description' : '{0}', 'name' : '{1}', 'activityEnabled': {2} }}", description, name, activityEnabled.ToString().ToLower());
 
                 HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "Device");
                 PrepareRequestForAuth(request);

@@ -12,8 +12,7 @@ namespace att.iot.client
     /// </summary>
     public class JsonActuatorData : ActuatorData
     {
-        JObject _value;
-        List<object> _index;
+        JToken _value;
 
         /// <summary>
         /// Loads the data.
@@ -21,110 +20,15 @@ namespace att.iot.client
         /// <param name="value">The raw value.</param>
         public override void Load(string value)
         {
-            _value = JObject.Parse(value);
+            _value = JToken.Parse(value);
         }
 
-        public void SetMap(List<object> values)
-        {
-            _index = values;
-        }
-
-        /// <summary>
-        /// Gets the length of the data.
-        /// </summary>
-        /// <value>
-        /// The length.
-        /// </value>
-        public override int Length
+        public JToken Value
         {
             get
             {
-                return _value.Count;
+                return _value;
             }
-        }
-
-        public override double AsDouble(int index)
-        {
-            string name = _index[index] as string;
-            if (name != null)
-                return _value[name].Value<double>();
-            else
-                throw new IndexOutOfRangeException(string.Format("index pos {0} does not contain a double", index));
-        }
-
-        public override double AsDouble(int[] index)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override bool AsBool(int index)
-        {
-            string name = _index[index] as string;
-            if (name != null)
-                return _value[name].Value<bool>();
-            else
-                throw new IndexOutOfRangeException(string.Format("index pos {0} does not contain a bool", index));
-        }
-
-        public override bool AsBool(int[] index)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override int AsInt(int index)
-        {
-            string name = _index[index] as string;
-            if (name != null)
-                return _value[name].Value<int>();
-            else
-                throw new IndexOutOfRangeException(string.Format("index pos {0} does not contain a int", index));
-        }
-
-        public override int AsInt(int[] index)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override DateTime AsDateTime(int index)
-        {
-            string name = _index[index] as string;
-            if (name != null)
-                return _value[name].Value<DateTime>();
-            else
-                throw new IndexOutOfRangeException(string.Format("index pos {0} does not contain a DateTime", index));
-        }
-
-        public override DateTime AsDateTime(int[] index)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override TimeSpan AsTimeSpan(int index)
-        {
-            string name = _index[index] as string;
-            if (name != null)
-                return _value[name].Value<TimeSpan>();
-            else
-                throw new IndexOutOfRangeException(string.Format("index pos {0} does not contain a TimeSpan", index));
-        }
-
-        public override TimeSpan AsTimeSpan(int[] index)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override string AsString(int index)
-        {
-            string name = _index[index] as string;
-            if (name != null)
-                return _value[name].Value<string>();
-            else
-                throw new IndexOutOfRangeException(string.Format("index pos {0} does not contain a string", index));
-        }
-
-        public override string AsString(int[] index)
-        {
-            throw new NotImplementedException();
         }
 
         /// <summary>
