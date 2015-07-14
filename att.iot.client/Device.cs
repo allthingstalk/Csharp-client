@@ -192,13 +192,22 @@ namespace att.iot.client
                 {
                     AssetManagementCommandData data = new AssetManagementCommandData();
                     data.Asset = path.AssetId[0];
+#if WINDOWS_UAP
+                    data.Command = System.Text.Encoding.UTF8.GetString(e.Message, 0, e.Message.Length);
+#else
                     data.Command = System.Text.Encoding.UTF8.GetString(e.Message);
+#endif
+
                     AssetManagementCommand(this, data);
                 }
             }
             else if (DeviceManagementCommand != null)
             {
+#if WINDOWS_UAP
+                string command = System.Text.Encoding.UTF8.GetString(e.Message, 0, e.Message.Length);
+#else
                 string command = System.Text.Encoding.UTF8.GetString(e.Message);
+#endif
                 DeviceManagementCommand(this, command);
             }
         }
@@ -212,7 +221,11 @@ namespace att.iot.client
         {
             if (ActuatorValue != null)
             {
+#if WINDOWS_UAP
+                string val = System.Text.Encoding.UTF8.GetString(e.Message, 0, e.Message.Length);
+#else
                 string val = System.Text.Encoding.UTF8.GetString(e.Message);
+#endif
                 ActuatorData data = null;
                 if (val[0] == '{')
                 {
@@ -334,9 +347,9 @@ namespace att.iot.client
             }
         }
 
-        #endregion
+#endregion
 
-        #region http
+#region http
         /// <summary>
         /// Initializes the HTTP communication.
         /// </summary>
@@ -384,12 +397,7 @@ namespace att.iot.client
                 }
                 request.Content = new StringContent(content, Encoding.UTF8, "application/json");
                 var task = _http.SendAsync(request, HttpCompletionOption.ResponseContentRead);
-                using (var result = task.Result)
-                    result.EnsureSuccessStatusCode();
-                _httpError = false;
-                if (_logger != null)
-                    _logger.Trace("device updated: {0}", content);
-                return true;
+                return processUpdateDeviceResult(task);
             }
             catch (Exception e)
             {
@@ -425,12 +433,7 @@ namespace att.iot.client
                 PrepareRequestForAuth(request);
                 request.Content = new StringContent(content, Encoding.UTF8, "application/json");
                 var task = _http.SendAsync(request, HttpCompletionOption.ResponseContentRead);
-                using (var result = task.Result)
-                    result.EnsureSuccessStatusCode();
-                _httpError = false;
-                if (_logger != null)
-                    _logger.Trace("device updated: {0}", content);
-                return true;
+                return processUpdateDeviceResult(task);
             }
             catch (Exception e)
             {
@@ -442,6 +445,38 @@ namespace att.iot.client
                 return false;
             }
         }
+
+        private bool processUpdateDeviceResult(Task<HttpResponseMessage> task)
+        {
+            using (var result = task.Result)
+            {
+                result.EnsureSuccessStatusCode();
+                using (HttpContent resContent = result.Content)
+                {
+                    var contentTask = resContent.ReadAsStringAsync();                                          // ... Read the string.
+                    string resultContent = contentTask.Result;
+
+                    if (resultContent != null && resultContent.Length >= 50)
+                    {
+                        JToken obj = JToken.Parse(resultContent);
+                        _httpError = false;
+                        string newDeviceId = obj["id"].Value<string>();
+                        if (DeviceId != newDeviceId)
+                        {
+                            DeviceId = newDeviceId;
+                            if (_logger != null)
+                                _logger.Trace("device updated: {0}", resultContent);
+                        }
+                        else if (_logger != null)
+                            _logger.Trace("device created from update: {0}", resultContent);
+                        return true;
+                    }
+                    else
+                        throw new Exception("Invalid result received from server, can't find Device Id");
+                }
+            }
+        }
+
 
         /// <summary>
         /// Simple way to create a devce. 
@@ -477,6 +512,8 @@ namespace att.iot.client
                             JToken obj = JToken.Parse(resultContent);
                             _httpError = false;
                             DeviceId = obj["id"].Value<string>();
+                            if (_logger != null)
+                                _logger.Trace("device updated: {0}", resultContent);
                             return true;
                         }
                         else
@@ -730,7 +767,7 @@ namespace att.iot.client
             return toSend;
         }
 
-        #endregion
+#endregion
 
 
         /// <summary>

@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>att.iot.client.winU</id>
+    <version>2.0.1.0</version>
+    <title>att.iot.client.winU</title>
+    <authors>Jan Bogaerts</authors>
+    <owners>Jan Bogaerts</owners>
+    <licenseUrl>https://github.com/allthingstalk/Csharp-client/blob/master/license.md</licenseUrl>
+    <projectUrl>https://github.com/allthingstalk/Csharp-client</projectUrl>
+    <iconUrl>https://github.com/allthingstalk/Csharp-client/blob/master/logo_badge_50x50.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A C# client library for connecting internet of things applications running on windows 10 for devices, to the AllthingsTalk platform. It provides the communication layer, both HTTP and pub-sub to the cloud for systems that perform home automation, smart metering, remote sensing, telemetry, remote control and much more. This version is built for Windows universal applications, Any CPU type</description>
+    <releaseNotes>Store device id when 'update device' created a new device</releaseNotes>
+    <copyright>Copyright 2015</copyright>
+    <tags>AllThingsTalk IOT pubsub M2M embedded RPI MinnowBoard Galileo embedded windows windows10 win10</tags>
+	
+	<dependencies>
+      <dependency id="Newtonsoft.Json" version="7.0.1"/>
+    </dependencies>
+	
+	<references>
+		<reference file="att.iot.client.winU.dll" />
+		<reference file="M2MqttUniversal.dll" />
+	</references>
+  </metadata>
+  <files><file src="bin\release\att.iot.client.winU.dll" target="lib" />
+	        <file src="bin\release\lib\M2MqttUniversal.dll" target="lib" />
+	</files>
+</package>
