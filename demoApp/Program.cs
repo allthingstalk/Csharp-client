@@ -20,7 +20,7 @@ namespace demoApp
             //create the device object with your account details
             _device = new Device("your client id", "your client key", _logger);
             //if the device was already created, load the id from the settings.
-            _device.DeviceId = Properties.Settings.Default["device id"].ToString();
+            _device.DeviceId = Properties.Settings.Default["deviceId"].ToString();
             _device.ActuatorValue += _device_ActuatorValue;
         }
 
@@ -39,7 +39,7 @@ namespace demoApp
             if (success)
             {
                 //store the device id in the settings, so we can reuse it later on.
-                Properties.Settings.Default["device id"] = _device.DeviceId; 
+                Properties.Settings.Default["deviceId"] = _device.DeviceId; 
                 Properties.Settings.Default.Save();
 
                 //update or create the assets on the device

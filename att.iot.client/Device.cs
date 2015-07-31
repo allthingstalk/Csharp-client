@@ -14,7 +14,7 @@ using uPLibrary.Networking.M2Mqtt.Messages;
 
 namespace att.iot.client
 {
-    public class Device: IDevice, IDisposable
+    public class Device : IDevice, IDisposable
     {
         #region fields
         MqttClient _mqtt;
@@ -49,7 +49,7 @@ namespace att.iot.client
         ~Device()
         {
             Free();
-        } 
+        }
         #endregion
 
         #region events
@@ -87,7 +87,7 @@ namespace att.iot.client
                 {
                     if (string.IsNullOrEmpty(_deviceId) == false)
                         UnSubscribeToTopics();
-                        _deviceId = value;
+                    _deviceId = value;
                     if (string.IsNullOrEmpty(_deviceId) == false)
                         SubscribeToTopics();
                 }
@@ -113,7 +113,7 @@ namespace att.iot.client
             _mqtt.ConnectionClosed += client_MqttMsgDisconnected;
             string clientId = Guid.NewGuid().ToString().Substring(0, 22);                   //need to respect the max id of mqtt.
             string mqttUserName = _clientId + ":" + _clientId;
-            _mqtt.Connect(clientId, mqttUserName, _clientKey, true, 30); 
+            _mqtt.Connect(clientId, mqttUserName, _clientKey, true, 30);
         }
 
         /// <summary>
@@ -252,7 +252,7 @@ namespace att.iot.client
         /// <exception cref="System.NotImplementedException"></exception>
         public void Send(int asset, object value)
         {
-            string toSend = PrepareValueForSending(value);           
+            string toSend = PrepareValueForSending(value);
             string topic = getTopicPath(asset);
             lock (_mqtt)                                                               //make certain that the messages sent by different threads at the same time, don't intermingle.
             {
@@ -308,7 +308,7 @@ namespace att.iot.client
             }
         }
 
-        
+
 
         private string[] GetTopics()
         {
@@ -335,7 +335,7 @@ namespace att.iot.client
         /// <param name="id">The credentials for the gateway and client.</param>
         void UnSubscribeToTopics()
         {
-            if (_mqtt != null)     
+            if (_mqtt != null)
             {
                 lock (_mqtt)                                                                //only 1 thread can access the mqtt connection at a time.
                 {
@@ -347,9 +347,9 @@ namespace att.iot.client
             }
         }
 
-#endregion
+        #endregion
 
-#region http
+        #region http
         /// <summary>
         /// Initializes the HTTP communication.
         /// </summary>
@@ -388,6 +388,9 @@ namespace att.iot.client
             if (string.IsNullOrEmpty(DeviceId)) throw new Exception("Device id not set");
             try
             {
+                if (_logger != null)
+                    _logger.Trace("put Device: {0}", content);
+
                 HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Put, "Device/" + DeviceId);
                 PrepareRequestForAuth(request);
                 if (extraHeaders != null)
@@ -401,11 +404,14 @@ namespace att.iot.client
             }
             catch (Exception e)
             {
-                _httpError = true;
                 if (_httpError == false && _logger != null)
                     _logger.Error("HTTP comm problem: {0}", e.ToString());
-                else if(_logger == null)
+                else if (_logger == null)
+                {
+                    _httpError = true;
                     throw;
+                }
+                _httpError = true;
                 return false;
             }
         }
@@ -429,6 +435,9 @@ namespace att.iot.client
             {
                 string content = string.Format("{{ 'description': '{0}', 'name': '{1}', 'activityEnabled': {2}}}", description, name, activityEnabled.ToString().ToLower());
 
+                if (_logger != null)
+                    _logger.Trace("put Device: {0}", content);
+
                 HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Put, "Device/" + DeviceId);
                 PrepareRequestForAuth(request);
                 request.Content = new StringContent(content, Encoding.UTF8, "application/json");
@@ -437,11 +446,14 @@ namespace att.iot.client
             }
             catch (Exception e)
             {
-                _httpError = true;
                 if (_httpError == false && _logger != null)
                     _logger.Error("HTTP comm problem: {0}", e.ToString());
-                else if(_logger == null)
+                else if (_logger == null)
+                {
+                    _httpError = true;
                     throw;
+                }
+                _httpError = true;
                 return false;
             }
         }
@@ -450,12 +462,14 @@ namespace att.iot.client
         {
             using (var result = task.Result)
             {
-                result.EnsureSuccessStatusCode();
                 using (HttpContent resContent = result.Content)
                 {
                     var contentTask = resContent.ReadAsStringAsync();                                          // ... Read the string.
                     string resultContent = contentTask.Result;
 
+                    result.EnsureSuccessStatusCode();
+                    if (_logger != null)
+                        _logger.Trace("response from server: {0}", resultContent);
                     if (resultContent != null && resultContent.Length >= 50)
                     {
                         JToken obj = JToken.Parse(resultContent);
@@ -495,18 +509,23 @@ namespace att.iot.client
             {
                 string content = string.Format(@"{{ 'description' : '{0}', 'name' : '{1}', 'activityEnabled': {2} }}", description, name, activityEnabled.ToString().ToLower());
 
+                if (_logger != null)
+                    _logger.Trace("post Device: {0}", content);
+
                 HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "Device");
                 PrepareRequestForAuth(request);
                 request.Content = new StringContent(content, Encoding.UTF8, "application/json");
                 var task = _http.SendAsync(request, HttpCompletionOption.ResponseContentRead);
                 using (var result = task.Result)
                 {
-                    result.EnsureSuccessStatusCode();
                     using (HttpContent resContent = result.Content)
                     {
                         var contentTask = resContent.ReadAsStringAsync();                                          // ... Read the string.
                         string resultContent = contentTask.Result;
 
+                        if (_logger != null)
+                            _logger.Trace("response from server: {0}", resultContent);
+                        result.EnsureSuccessStatusCode();
                         if (resultContent != null && resultContent.Length >= 50)
                         {
                             JToken obj = JToken.Parse(resultContent);
@@ -523,11 +542,14 @@ namespace att.iot.client
             }
             catch (Exception e)
             {
-                _httpError = true;
                 if (_httpError == false && _logger != null)
                     _logger.Error("HTTP comm problem: {0}", e.ToString());
-                else if(_logger == null)
+                else if (_logger == null)
+                {
+                    _httpError = true;
                     throw;
+                }
+                _httpError = true;
                 return false;
             }
         }
@@ -565,11 +587,17 @@ namespace att.iot.client
             }
             catch (Exception e)
             {
-                _httpError = true;
                 if (_httpError == false && _logger != null)
+                {
+                    _httpError = true;
                     _logger.Error("HTTP comm problem: {0}", e.ToString());
-                else if(_logger == null)
+                }
+                else if (_logger == null)
+                {
+                    _httpError = true;
                     throw;
+                }
+
             }
         }
 
@@ -610,11 +638,16 @@ namespace att.iot.client
             }
             catch (Exception e)
             {
-                _httpError = true;
                 if (_httpError == false && _logger != null)
+                {
                     _logger.Error("HTTP comm problem: {0}", e.ToString());
-                else if(_logger == null)
+                    _httpError = true;
+                }
+                else if (_logger == null)
+                {
+                    _httpError = true;
                     throw;
+                }
             }
             return false;
         }
@@ -657,11 +690,16 @@ namespace att.iot.client
             }
             catch (Exception e)
             {
-                _httpError = true;
                 if (_httpError == false && _logger != null)
+                {
                     _logger.Error("HTTP comm problem: {0}", e.ToString());
-                else if(_logger == null)
+                    _httpError = true;
+                }
+                else if (_logger == null)
+                {
+                    _httpError = true;
                     throw;
+                }
             }
         }
 
@@ -700,11 +738,16 @@ namespace att.iot.client
             }
             catch (Exception e)
             {
-                _httpError = true;
                 if (_httpError == false && _logger != null)
+                {
                     _logger.Error("HTTP comm problem: {0}", e.ToString());
-                else if(_logger == null)
+                    _httpError = true;
+                }
+                else if (_logger == null)
+                {
+                    _httpError = true;
                     throw;
+                }
             }
             return null;
         }
@@ -732,13 +775,18 @@ namespace att.iot.client
             }
             catch (Exception e)
             {
-                _httpError = true;
                 if (_httpError == false && _logger != null)
+                {
+                    _httpError = true;
                     _logger.Error("HTTP comm problem: {0}", e.ToString());
+                }
                 if (_logger != null)
                     _logger.Error("failed to send message over http, to: {0}, content: {1}", asset, toSend);
-                else if (_logger == null)
+                else
+                {
+                    _httpError = true;
                     throw;
+                }
             }
         }
 
@@ -746,7 +794,7 @@ namespace att.iot.client
         {
             string toSend = null;
             JObject result = new JObject();
-            
+
             result.Add("at", DateTime.UtcNow);
             if (value is JObject)
                 result.Add("value", (JObject)value);
@@ -767,7 +815,7 @@ namespace att.iot.client
             return toSend;
         }
 
-#endregion
+        #endregion
 
 
         /// <summary>
