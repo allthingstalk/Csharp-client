@@ -25,7 +25,6 @@
 using att.iot.client;
 using GrovePi;
 using System;
-using System.Collections.Generic;
 using Windows.Storage;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -63,7 +62,7 @@ namespace Blinky
         private void Init()
         {
             _logger = new MyLogger();
-            _device = new Device("testjan2", "xnmf5g0erse", _logger);
+            _device = new Device("your client id", "your client key", _logger);
             _device.DeviceId = (string)ApplicationData.Current.LocalSettings.Values["deviceId"];
             _device.ActuatorValue += _server_ActuatorValue;
 
