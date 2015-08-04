@@ -1,0 +1,1 @@
+nuget pack att.iot.client.nuspec -IncludeReferencedProjects -Prop Configuration=Release -Verbosity detailed

@@ -20,9 +20,9 @@ namespace doorbell
         const string clientId = "your client id";
         const string clientKey = "your client key";
 
-        GrovePi.Sensors.IButtonSensor btn;
-        bool sensorPrev = false;
-        DispatcherTimer timer;
+        GrovePi.Sensors.IButtonSensor _btn;
+        bool _sensorPrev = false;
+        DispatcherTimer _timer;
         static Device _device;
 
         const int doorBellPin = 2;
@@ -34,21 +34,21 @@ namespace doorbell
             InitGPIO();
             Init();
 
-            timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromMilliseconds(300);
-            timer.Tick += Timer_Tick;
-            timer.Start();
+            _timer = new DispatcherTimer();
+            _timer.Interval = TimeSpan.FromMilliseconds(300);
+            _timer.Tick += Timer_Tick;
+            _timer.Start();
         }
 
         private void Timer_Tick(object sender, object e)
         {
             try
             {
-                bool isPressed = btn.CurrentState == GrovePi.Sensors.SensorStatus.On;
-                if (sensorPrev != isPressed)
+                bool isPressed = _btn.CurrentState == GrovePi.Sensors.SensorStatus.On;
+                if (_sensorPrev != isPressed)
                 {
                     _device.Send(doorBellPin, isPressed.ToString().ToLower());        //important: cast to lower so the cloud can interprete the data correclty.If we don't do this, the value will not be stored in the cloud.
-                    sensorPrev = isPressed;
+                    _sensorPrev = isPressed;
                 }
             }
             catch (Exception ex)
@@ -67,8 +67,8 @@ namespace doorbell
 
         private void InitGPIO()
         {
-            btn = DeviceFactory.Build.ButtonSensor(Pin.DigitalPin2);
-            if (btn == null)
+            _btn = DeviceFactory.Build.ButtonSensor(Pin.DigitalPin2);
+            if (_btn == null)
                 throw new Exception("Failed to intialize button.");
         }
     }

@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("att.iot.client.net45")]
+[assembly: AssemblyTitle("att.iot.client.net451")]
 [assembly: AssemblyDescription("A C# client library for connecting internet of things applications to the AllthingsTalk platform. It provides the communication layer, both HTTP and pub-sub to the cloud for systems that perform home automation, smart metering, remote sensing, telemetry, remote control and much more.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("AllThingsTalk")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("68cb2c11-fae3-4867-9679-f28c7848ea69")]
+[assembly: Guid("f5d52bd6-a854-41b3-8b43-4bde54fc3c02")]
 
 // Version information for an assembly consists of the following four values:
 //

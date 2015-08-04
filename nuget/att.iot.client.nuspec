@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package >
   <metadata>
-    <id>att.iot.client.winU</id>
-    <version>2.0.1.0</version>
+    <id>att.iot.client</id>
+    <version>2.1.0.0</version>
     <title>att.iot.client.winU</title>
     <authors>Jan Bogaerts</authors>
     <owners>Jan Bogaerts</owners>
@@ -11,19 +11,30 @@
     <iconUrl>https://github.com/allthingstalk/Csharp-client/blob/master/logo_badge_50x50.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>A C# client library for connecting internet of things applications running on windows 10 for devices, to the AllthingsTalk platform. It provides the communication layer, both HTTP and pub-sub to the cloud for systems that perform home automation, smart metering, remote sensing, telemetry, remote control and much more. This version is built for Windows universal applications, Any CPU type</description>
+    <releaseNotes>- adds GetAssetState and GetAssets functions
+- improves error handling and logging
+- updated builds for new win 10 release
+- merges muget packages (which targeted different frameworks) into 1
+    </releaseNotes>
     <copyright>Copyright 2015</copyright>
-    <tags>AllThingsTalk IOT pubsub M2M embedded RPI MinnowBoard Galileo embedded windows windows10 win10</tags>
+    <tags>AllThingsTalk IOT pubsub M2M embedded RPI MinnowBoard Galileo Arduino GrovePi embedded windows10 win10</tags>
 	
 	<dependencies>
       <dependency id="Newtonsoft.Json" version="7.0.1"/>
+    <dependency id="m2mqtt" version="4.1.0.1"/>
     </dependencies>
 	
 	<references>
-		<reference file="att.iot.client.winU.dll" />
-		<reference file="M2MqttUniversal.dll" />
+		<reference file="att.iot.client.dll" />
 	</references>
   </metadata>
-  <files><file src="bin\release\att.iot.client.winU.dll" target="lib" />
-	        <file src="bin\release\lib\M2MqttUniversal.dll" target="lib" />
-	</files>
+
+  <files>
+    <file src="..\att.iot.client.winU\bin\release\att.iot.client.dll" target="lib\uap" />
+    <file src="..\att.iot.client\bin\release\att.iot.client.dll" target="lib\net45" />
+    <file src="..\att.iot.client.net451\bin\release\att.iot.client.dll" target="lib\net451" />
+    <file src="..\att.iot.client.net452\bin\release\att.iot.client.dll" target="lib\net452" />
+    <file src="..\att.iot.client.net46\bin\release\att.iot.client.dll" target="lib\net46" />
+  </files>
+  
 </package>

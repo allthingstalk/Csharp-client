@@ -1,1 +1,0 @@
-nuget pack att.iot.client.csproj -IncludeReferencedProjects -Prop Configuration=Release

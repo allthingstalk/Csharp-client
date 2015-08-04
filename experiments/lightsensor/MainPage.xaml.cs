@@ -17,8 +17,8 @@ namespace lightsensor
         const string clientId = "your client id";
         const string clientKey = "your client key";
 
-        GrovePi.Sensors.ILightSensor sensor;
-        DispatcherTimer timer;
+        GrovePi.Sensors.ILightSensor _sensor;
+        DispatcherTimer _timer;
         static Device _device;
 
         const int sensorPin = 0;
@@ -30,17 +30,17 @@ namespace lightsensor
             InitGPIO();
             Init();
 
-            timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromMilliseconds(300);
-            timer.Tick += Timer_Tick;
-            timer.Start();
+            _timer = new DispatcherTimer();
+            _timer.Interval = TimeSpan.FromMilliseconds(300);
+            _timer.Tick += Timer_Tick;
+            _timer.Start();
         }
 
         private void Timer_Tick(object sender, object e)
         {
             try
             {
-                int value = sensor.SensorValue();
+                int value = _sensor.SensorValue();
                 _device.Send(sensorPin, value.ToString());
             }
             catch (Exception ex)
@@ -59,8 +59,8 @@ namespace lightsensor
 
         private void InitGPIO()
         {
-            sensor = DeviceFactory.Build.LightSensor(Pin.AnalogPin0);
-            if (sensor == null)
+            _sensor = DeviceFactory.Build.LightSensor(Pin.AnalogPin0);
+            if (_sensor == null)
                 throw new Exception("Failed to intialize button.");
         }
     }

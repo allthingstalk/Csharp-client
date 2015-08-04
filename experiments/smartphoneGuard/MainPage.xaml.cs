@@ -1,4 +1,6 @@
-﻿using System;
+﻿using att.iot.client;
+using GrovePi;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -22,9 +24,53 @@ namespace smartphoneGuard
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        const string deviceId = "";
+        const string clientId = "your client id";
+        const string clientKey = "your client key";
+
+        GrovePi.Sensors.IBuzzer _buzzer;
+        const int _pin = 2;
+        static Device _device;
+
         public MainPage()
         {
             this.InitializeComponent();
+            InitGPIO();
+            Init();
+        }
+
+        private void Init()
+        {
+            _device = new Device(clientId, clientKey);
+            _device.DeviceId = deviceId;
+            _device.ActuatorValue += _server_ActuatorValue;
+
+            _device.UpdateAsset(_pin, "vMotor", "vibration motor", true, "boolean");
+        }
+
+        private void _server_ActuatorValue(object sender, ActuatorData e)
+        {
+            if (e.Asset == _pin)
+            {
+                StringActuatorData data = (StringActuatorData)e;
+                if (data.AsBool() == true)
+                {
+                    _buzzer.ChangeState(GrovePi.Sensors.SensorStatus.On);
+                    _device.Send(_pin, "true");             //feedback for led
+                }
+                else
+                {
+                    _buzzer.ChangeState(GrovePi.Sensors.SensorStatus.Off);
+                    _device.Send(_pin, "false");
+                }
+            }
+        }
+
+        private void InitGPIO()
+        {
+            _buzzer = DeviceFactory.Build.Buzzer(Pin.DigitalPin2);
+            if (_buzzer == null)
+                throw new Exception("Failed to intialize v motor - buzzer.");
         }
     }
 }
