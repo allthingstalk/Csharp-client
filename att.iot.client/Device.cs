@@ -388,10 +388,11 @@ namespace att.iot.client
             if (string.IsNullOrEmpty(DeviceId)) throw new Exception("Device id not set");
             try
             {
+                string uri = "Device/" + DeviceId;
                 if (_logger != null)
-                    _logger.Trace("put Device: {0}", content);
+                    _logger.Trace("update device request\nURI: {0}\nvalue: {1}", uri, content);
 
-                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Put, "Device/" + DeviceId);
+                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Put, uri);
                 PrepareRequestForAuth(request);
                 if (extraHeaders != null)
                 {
@@ -434,11 +435,11 @@ namespace att.iot.client
             try
             {
                 string content = string.Format("{{ 'description': '{0}', 'name': '{1}', 'activityEnabled': {2}}}", description, name, activityEnabled.ToString().ToLower());
-
+                string uri = "Device/" + DeviceId;
                 if (_logger != null)
-                    _logger.Trace("put Device: {0}", content);
+                    _logger.Trace("update device request\nURI: {0}\nvalue: {1}", uri, content);
 
-                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Put, "Device/" + DeviceId);
+                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Put, uri);
                 PrepareRequestForAuth(request);
                 request.Content = new StringContent(content, Encoding.UTF8, "application/json");
                 var task = _http.SendAsync(request, HttpCompletionOption.ResponseContentRead);
@@ -466,11 +467,10 @@ namespace att.iot.client
                 {
                     var contentTask = resContent.ReadAsStringAsync();                                          // ... Read the string.
                     string resultContent = contentTask.Result;
-
-                    result.EnsureSuccessStatusCode();
                     if (_logger != null)
                         _logger.Trace("response from server: {0}", resultContent);
-                    if (resultContent != null && resultContent.Length >= 50)
+                    result.EnsureSuccessStatusCode();
+                    if (resultContent != null && resultContent.Length >= 30)
                     {
                         JToken obj = JToken.Parse(resultContent);
                         _httpError = false;
@@ -508,11 +508,11 @@ namespace att.iot.client
             try
             {
                 string content = string.Format(@"{{ 'description' : '{0}', 'name' : '{1}', 'activityEnabled': {2} }}", description, name, activityEnabled.ToString().ToLower());
-
+                string uri = "Device";
                 if (_logger != null)
-                    _logger.Trace("post Device: {0}", content);
+                    _logger.Trace("create device request\nURI: {0}\nvalue: {1}", uri, content);
 
-                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "Device");
+                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, uri);
                 PrepareRequestForAuth(request);
                 request.Content = new StringContent(content, Encoding.UTF8, "application/json");
                 var task = _http.SendAsync(request, HttpCompletionOption.ResponseContentRead);
@@ -524,7 +524,7 @@ namespace att.iot.client
                         string resultContent = contentTask.Result;
 
                         if (_logger != null)
-                            _logger.Trace("response from server: {0}", resultContent);
+                            _logger.Trace("create device response: {0}", resultContent);
                         result.EnsureSuccessStatusCode();
                         if (resultContent != null && resultContent.Length >= 50)
                         {
@@ -545,10 +545,7 @@ namespace att.iot.client
                 if (_httpError == false && _logger != null)
                     _logger.Error("HTTP comm problem: {0}", e.ToString());
                 else if (_logger == null)
-                {
-                    _httpError = true;
                     throw;
-                }
                 _httpError = true;
                 return false;
             }
@@ -570,7 +567,10 @@ namespace att.iot.client
             try
             {
                 string contentStr = content.ToString();
-                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Put, "Asset/" + getRemoteAssetId(asset));
+                string uri = "Asset/" + getRemoteAssetId(asset);
+                if (_logger != null)
+                    _logger.Trace("asset update request\nURI: {0}\nvalue: {1}", uri, contentStr);
+                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Put, uri);
                 PrepareRequestForAuth(request);
                 if (extraHeaders != null)
                 {
@@ -580,10 +580,17 @@ namespace att.iot.client
                 request.Content = new StringContent(contentStr, Encoding.UTF8, "application/json");
                 var task = _http.SendAsync(request, HttpCompletionOption.ResponseContentRead);
                 using (var result = task.Result)
-                    result.EnsureSuccessStatusCode();
+                {
+                    using (HttpContent resContent = result.Content)
+                    {
+                        var contentTask = resContent.ReadAsStringAsync();                                          // ... Read the string.
+                        string resultContent = contentTask.Result;
+                        if (_logger != null)
+                            _logger.Trace("asset update response: {0}", resultContent);
+                        result.EnsureSuccessStatusCode();
+                    }
+                }
                 _httpError = false;
-                if (_logger != null)
-                    _logger.Trace("asset updated: {0}", contentStr);
             }
             catch (Exception e)
             {
@@ -593,10 +600,7 @@ namespace att.iot.client
                     _logger.Error("HTTP comm problem: {0}", e.ToString());
                 }
                 else if (_logger == null)
-                {
-                    _httpError = true;
                     throw;
-                }
 
             }
         }
@@ -625,15 +629,25 @@ namespace att.iot.client
                     content = string.Format("{{ \"is\" : \"{0}\", \"name\" : \"{1}\", \"description\" : \"{2}\", \"deviceId\": \"{3}\", \"profile\" : {{ \"type\" : \"{4}\" }}}}", isActuator == true ? "actuator" : "sensor", name, description, DeviceId, type);
 
                 string contentStr = content.ToString();
-                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Put, "api/Asset/" + getRemoteAssetId(assetId));
+                string uri = "api/Asset/" + getRemoteAssetId(assetId);
+                if (_logger != null)
+                    _logger.Trace("asset update request\nURI: {0}\nvalue: {1}", uri, contentStr);
+                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Put, uri);
                 PrepareRequestForAuth(request);
                 request.Content = new StringContent(contentStr, Encoding.UTF8, "application/json");
                 var task = _http.SendAsync(request, HttpCompletionOption.ResponseContentRead);
                 using (var result = task.Result)
-                    result.EnsureSuccessStatusCode();
+                {
+                    using (HttpContent resContent = result.Content)
+                    {
+                        var contentTask = resContent.ReadAsStringAsync();                                          // ... Read the string.
+                        string resultContent = contentTask.Result;
+                        if (_logger != null)
+                            _logger.Trace("asset update response: {0}", resultContent);
+                        result.EnsureSuccessStatusCode();
+                    }
+                }
                 _httpError = false;
-                if (_logger != null)
-                    _logger.Trace("asset updated: {0}", contentStr);
                 return true;
             }
             catch (Exception e)
@@ -644,10 +658,7 @@ namespace att.iot.client
                     _httpError = true;
                 }
                 else if (_logger == null)
-                {
-                    _httpError = true;
                     throw;
-                }
             }
             return false;
         }
@@ -666,7 +677,10 @@ namespace att.iot.client
             if (string.IsNullOrEmpty(DeviceId)) throw new Exception("Device id not set");
             try
             {
-                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Delete, "Device/" + DeviceId);
+                string uri = "Device/" + DeviceId;
+                if (_logger != null)
+                    _logger.Trace("Delete device; URI: {0}", uri);
+                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Delete, uri);
                 PrepareRequestForAuth(request);
                 var task = _http.SendAsync(request, HttpCompletionOption.ResponseContentRead);
                 using (var result = task.Result)
@@ -696,10 +710,7 @@ namespace att.iot.client
                     _httpError = true;
                 }
                 else if (_logger == null)
-                {
-                    _httpError = true;
                     throw;
-                }
             }
         }
 
@@ -715,18 +726,22 @@ namespace att.iot.client
         {
             try
             {
-                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, "Device/" + DeviceId + "/assets?style=primary");
+                string uri = "Device/" + DeviceId + "/assets?style=primary";
+                if (_logger != null)
+                    _logger.Trace("get primary asset; URI: {0}", uri);
+                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, uri);
                 PrepareRequestForAuth(request);
                 var task = _http.SendAsync(request, HttpCompletionOption.ResponseContentRead);
 
                 using (var result = task.Result)
                 {
-                    result.EnsureSuccessStatusCode();
                     using (HttpContent content = result.Content)
                     {
                         var contentTask = content.ReadAsStringAsync();                                          // ... Read the string.
                         string resultContent = contentTask.Result;
-
+                        if (_logger != null)
+                            _logger.Trace("get primary asset response: {0}", resultContent);
+                        result.EnsureSuccessStatusCode();
                         if (resultContent != null && resultContent.Length >= 50)
                         {
                             JToken obj = JToken.Parse(resultContent);
@@ -744,10 +759,7 @@ namespace att.iot.client
                     _httpError = true;
                 }
                 else if (_logger == null)
-                {
-                    _httpError = true;
                     throw;
-                }
             }
             return null;
         }
@@ -763,15 +775,25 @@ namespace att.iot.client
             string toSend = PrepareValueForSendingHTTP(value);
             try
             {
-                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Put, "asset/" + getRemoteAssetId(asset) + "/state");
+                string uri = "asset/" + getRemoteAssetId(asset) + "/state";
+                if (_logger != null)
+                    _logger.Trace("send asset value over HTTP request\nURI: {0}\nvalue: {1}", uri, toSend);
+                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Put, uri);
                 PrepareRequestForAuth(request);
                 request.Content = new StringContent(toSend, Encoding.UTF8, "application/json");
                 var task = _http.SendAsync(request, HttpCompletionOption.ResponseContentRead);
                 using (var result = task.Result)
-                    result.EnsureSuccessStatusCode();
+                {
+                    using (HttpContent resContent = result.Content)
+                    {
+                        var contentTask = resContent.ReadAsStringAsync();                                          // ... Read the string.
+                        string resultContent = contentTask.Result;
+                        if (_logger != null)
+                            _logger.Trace("send asset value over HTTP response: {0}", resultContent);
+                        result.EnsureSuccessStatusCode();
+                    }
+                }
                 _httpError = false;
-                if (_logger != null)
-                    _logger.Trace("message send over http, to: {0}, content: {1}", asset, toSend);
             }
             catch (Exception e)
             {
@@ -783,12 +805,103 @@ namespace att.iot.client
                 if (_logger != null)
                     _logger.Error("failed to send message over http, to: {0}, content: {1}", asset, toSend);
                 else
-                {
-                    _httpError = true;
                     throw;
-                }
             }
         }
+
+        /// <summary>
+        /// gets the last stored value of the specified asset.
+        /// </summary>
+        /// <param name="asset">the id (local to this device) of the asset for which to return the last recorded value.</param>
+        /// <returns>the value as a json structure.</returns>
+        public JToken GetAssetState(int asset)
+        {
+            try
+            {
+                string uri = "/asset/" + DeviceId + "_" + asset.ToString() + "/state";
+                if (_logger != null)
+                    _logger.Trace("get asset state; URI: {0}", uri);
+                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, uri);
+                PrepareRequestForAuth(request);
+                var task = _http.SendAsync(request, HttpCompletionOption.ResponseContentRead);
+
+                using (var result = task.Result)
+                {
+                    using (HttpContent content = result.Content)
+                    {
+                        var contentTask = content.ReadAsStringAsync();                                          // ... Read the string.
+                        string resultContent = contentTask.Result;
+                        if (_logger != null)
+                            _logger.Trace("get asset state response: {0}", resultContent);
+                        result.EnsureSuccessStatusCode();
+                        if (resultContent != null && resultContent.Length >= 50)
+                        {
+                            JToken obj = JToken.Parse(resultContent);
+                            _httpError = false;
+                            return obj;
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                if (_httpError == false && _logger != null)
+                {
+                    _logger.Error("HTTP comm problem: {0}", e.ToString());
+                    _httpError = true;
+                }
+                else if (_logger == null)
+                    throw;
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// gets all the assets that the cloud knows for this device.
+        /// </summary>
+        /// <returns>a json object (array) containing all the asset definitions</returns>
+        public JToken GetAssets()
+        {
+            try
+            {
+                string uri = "/device/" + DeviceId + "/assets";
+                if (_logger != null)
+                    _logger.Trace("get assets; URI: {0}", uri);
+                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, uri);
+                PrepareRequestForAuth(request);
+                var task = _http.SendAsync(request, HttpCompletionOption.ResponseContentRead);
+
+                using (var result = task.Result)
+                {
+                    using (HttpContent content = result.Content)
+                    {
+                        var contentTask = content.ReadAsStringAsync();                                          // ... Read the string.
+                        string resultContent = contentTask.Result;
+                        if (_logger != null)
+                            _logger.Trace("get assets response: {0}", resultContent);
+                        result.EnsureSuccessStatusCode();
+                        if (resultContent != null && resultContent.Length >= 50)
+                        {
+                            JToken obj = JToken.Parse(resultContent);
+                            _httpError = false;
+                            return obj;
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                if (_httpError == false && _logger != null)
+                {
+                    _logger.Error("HTTP comm problem: {0}", e.ToString());
+                    _httpError = true;
+                }
+                else if (_logger == null)
+                    throw;
+            }
+            return null;
+        }
+
 
         private string PrepareValueForSendingHTTP(object value)
         {
