@@ -3,7 +3,7 @@
   <metadata>
     <id>att.iot.client</id>
     <version>2.1.0.0</version>
-    <title>att.iot.client.winU</title>
+    <title>att.iot.client</title>
     <authors>Jan Bogaerts</authors>
     <owners>Jan Bogaerts</owners>
     <licenseUrl>https://github.com/allthingstalk/Csharp-client/blob/master/license.md</licenseUrl>
