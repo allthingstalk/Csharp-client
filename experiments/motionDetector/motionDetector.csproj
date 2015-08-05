@@ -128,12 +128,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\att.iot.client.winU\att.iot.client.winU.csproj">
-      <Project>{b296f217-8dff-426e-b63c-e858a63e1421}</Project>
-      <Name>att.iot.client.winU</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Reference Include="GrovePi">
       <HintPath>..\..\external\GrovePi\GrovePi.dll</HintPath>
     </Reference>

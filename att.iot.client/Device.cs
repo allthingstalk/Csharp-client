@@ -78,6 +78,11 @@ namespace att.iot.client
         public event EventHandler ConnectionReset;
         #endregion
 
+
+        /// <summary>
+        /// gets or sets the id of the device related to this object.
+        /// When the device is created with <see cref="CreateDevice(string, string, bool)"/>, then this property is filled in automatically.
+        /// </summary>
         public string DeviceId
         {
             get { return _deviceId; }
@@ -715,12 +720,9 @@ namespace att.iot.client
         }
 
         /// <summary>
-        /// requests the primary asset id and it's profile type of the specified device.
+        /// requests the primary asset id and it's profile type of the  device.
         /// </summary>
-        /// <param name="credentials">The credentials to log into the cloudapp server with.</param>
-        /// <param name="deviceId">The device identifier (global version).</param>
-        /// <returns>
-        /// the asset id that corresponds with the device
+        /// the asset definition
         /// </returns>
         public JToken GetPrimaryAsset()
         {
@@ -767,8 +769,7 @@ namespace att.iot.client
         /// <summary>
         /// sends the asset value to the server.
         /// </summary>
-        /// <param name="credentials">The credentials to authenticate with in the platform.</param>
-        /// <param name="asset">The asset id (remote, what the server uses). Define it as a topic path, which includes all relevant components</param>
+        /// <param name="asset">The asset id (local to this device). </param>
         /// <param name="value">The value, either a string with a single value or a json object with multiple values.</param>
         public void SendAssetValueHTTP(int asset, object value)
         {
@@ -790,6 +791,54 @@ namespace att.iot.client
                         string resultContent = contentTask.Result;
                         if (_logger != null)
                             _logger.Trace("send asset value over HTTP response: {0}", resultContent);
+                        result.EnsureSuccessStatusCode();
+                    }
+                }
+                _httpError = false;
+            }
+            catch (Exception e)
+            {
+                if (_httpError == false && _logger != null)
+                {
+                    _httpError = true;
+                    _logger.Error("HTTP comm problem: {0}", e.ToString());
+                }
+                if (_logger != null)
+                    _logger.Error("failed to send message over http, to: {0}, content: {1}", asset, toSend);
+                else
+                    throw;
+            }
+        }
+
+        /// <summary>
+        /// sends a command to an asset on another device.
+        /// </summary>
+        /// <remarks>
+        /// Use this function to command another device. You can only send commands to devices that you own, which are in the
+        /// same account as this device.
+        /// </remarks>
+        /// <param name="asset">The full id of the asset to send a command to</param>
+        /// <param name="value">The value to send to the command</param>
+        public void SendCommandTo(string asset, object value)
+        {
+            string toSend = value.ToString();
+            try
+            {
+                string uri = "asset/" + asset + "/command";
+                if (_logger != null)
+                    _logger.Trace("send command request\nURI: {0}\nvalue: {1}", uri, toSend);
+                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Put, uri);
+                PrepareRequestForAuth(request);
+                request.Content = new StringContent(toSend, Encoding.UTF8, "application/json");
+                var task = _http.SendAsync(request, HttpCompletionOption.ResponseContentRead);
+                using (var result = task.Result)
+                {
+                    using (HttpContent resContent = result.Content)
+                    {
+                        var contentTask = resContent.ReadAsStringAsync();                                          // ... Read the string.
+                        string resultContent = contentTask.Result;
+                        if (_logger != null)
+                            _logger.Trace("send command response: {0}", resultContent);
                         result.EnsureSuccessStatusCode();
                     }
                 }

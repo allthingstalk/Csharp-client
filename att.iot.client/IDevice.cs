@@ -36,6 +36,12 @@ namespace att.iot.client
         event EventHandler ConnectionReset;    
 
         /// <summary>
+        /// gets or sets the id of the device related to this object.
+        /// When the device is created with <see cref="CreateDevice(string, string, bool)"/>, then this property is filled in automatically.
+        /// </summary>
+        string DeviceId { get; set; }
+
+        /// <summary>
         /// Updates or creates the device.
         /// Use this method if you want to be in full control on how the device gets created.
         /// </summary>
@@ -115,12 +121,45 @@ namespace att.iot.client
         /// <param name="value">The value, either a string witha single value or a json object with multiple values.</param>
         void Send(int asset, object value);
 
+
+        /// <summary>
+        /// requests the primary asset id and it's profile type of the device.
+        /// </summary>
+        /// <returns>
+        /// the asset definition
+        /// </returns>
+        JToken GetPrimaryAsset();
+
         /// <summary>
         /// sends the asset value to the server.
         /// </summary>
-        /// <param name="asset">The asset id (remote, what the server uses). Define it as a topic path, which includes all relevant components</param>
+        /// <param name="asset">The asset id (local to this device). </param>
         /// <param name="value">The value, either a string with a single value or a json object with multiple values.</param>
         void SendAssetValueHTTP(int asset, object value);
+
+        /// <summary>
+        /// gets the last stored value of the specified asset.
+        /// </summary>
+        /// <param name="asset">the id (local to this device) of the asset for which to return the last recorded value.</param>
+        /// <returns>the value as a json structure.</returns>
+        JToken GetAssetState(int asset);
+
+        /// <summary>
+        /// gets all the assets that the cloud knows for this device.
+        /// </summary>
+        /// <returns>a json object (array) containing all the asset definitions</returns>
+        JToken GetAssets();
+
+        /// <summary>
+        /// sends a command to an asset on another device.
+        /// </summary>
+        /// <remarks>
+        /// Use this function to command another device. You can only send commands to devices that you own, which are in the
+        /// same account as this device.
+        /// </remarks>
+        /// <param name="asset">The full id of the asset to send a command to</param>
+        /// <param name="value">The value to send to the command</param>
+        void SendCommandTo(string asset, object value);
 
     }
 }

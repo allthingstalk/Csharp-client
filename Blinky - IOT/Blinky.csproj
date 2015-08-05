@@ -125,10 +125,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="att.iot.client.winU, Version=2.0.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\att.iot.client.winU.2.0.1.0\lib\att.iot.client.winU.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="GrovePi, Version=1.0.4.0, Culture=neutral, processorArchitecture=ARM">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\external\GrovePi\GrovePi.dll</HintPath>
