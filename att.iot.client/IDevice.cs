@@ -107,7 +107,7 @@ namespace att.iot.client
         /// <returns>
         /// True if successful, otherwise false
         /// </returns>
-        bool UpdateAsset(int assetId, string name, string description, bool isActuator, string type);
+        bool UpdateAsset(int assetId, string name, string description, bool isActuator, string type, AssetStyle style = AssetStyle.Undefined);
 
         /// <summary>
         /// Deletes the device.

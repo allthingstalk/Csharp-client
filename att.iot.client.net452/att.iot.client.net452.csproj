@@ -48,6 +48,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\att.iot.client\AssetStyle.cs">
+      <Link>AssetStyle.cs</Link>
+    </Compile>
     <Compile Include="..\att.iot.client\Device.cs">
       <Link>Device.cs</Link>
     </Compile>

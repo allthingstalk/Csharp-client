@@ -57,6 +57,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AssetStyle.cs" />
     <Compile Include="ILogger.cs" />
     <Compile Include="Model\ActuatorData.cs" />
     <Compile Include="Model\StringActuatorData.cs" />
