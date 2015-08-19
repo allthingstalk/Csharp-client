@@ -4,3 +4,5 @@ packages/
 att.iot.client.v11.suo
 .vs/att.iot.client/v14/.suo
 *.suo
+experiments/doorbell/project.lock.json
+experiments/smartphoneGuard/project.lock.json

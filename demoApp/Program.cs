@@ -20,7 +20,8 @@ namespace demoApp
             //create the device object with your account details
             _device = new Device("your client id", "your client key", _logger);
             //if the device was already created, load the id from the settings.
-            _device.DeviceId = Properties.Settings.Default["deviceId"].ToString();
+            //_device.DeviceId = Properties.Settings.Default["deviceId"].ToString();
+            _device.DeviceId = "your device id";
             _device.ActuatorValue += _device_ActuatorValue;
         }
 
@@ -29,18 +30,18 @@ namespace demoApp
         static void Main(string[] args)
         {
             Init();
-            bool success;
+            bool success = true;
             //create or update the device in the cloud.
-            if (string.IsNullOrEmpty(_device.DeviceId) == true)
-                success = _device.CreateDevice("C# test device", "a device created from my test script");
-            else
-                success = _device.UpdateDevice("C# test device", "a device created from my test script");
+            //if (string.IsNullOrEmpty(_device.DeviceId) == true)
+            //    success = _device.CreateDevice("C# test device", "a device created from my test script");
+            //else
+            //    success = _device.UpdateDevice("C# test device", "a device created from my test script");
 
             if (success)
             {
                 //store the device id in the settings, so we can reuse it later on.
-                Properties.Settings.Default["deviceId"] = _device.DeviceId; 
-                Properties.Settings.Default.Save();
+                //Properties.Settings.Default["deviceId"] = _device.DeviceId; 
+                //Properties.Settings.Default.Save();
 
                 //update or create the assets on the device
                 _device.UpdateAsset(1, "test actuator", "a test actuator", true, "bool");

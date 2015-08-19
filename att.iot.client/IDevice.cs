@@ -42,6 +42,7 @@ namespace att.iot.client
         string DeviceId { get; set; }
 
         /// <summary>
+        /// temporarily disabled cause of new 'grounds' implementation
         /// Updates or creates the device.
         /// Use this method if you want to be in full control on how the device gets created.
         /// </summary>
@@ -50,9 +51,10 @@ namespace att.iot.client
         /// <returns>
         /// True if successful, otherwise false
         /// </returns>
-        bool UpdateDevice(JObject content, Dictionary<string, string> extraHeaders = null);
+        //bool UpdateDevice(JObject content, Dictionary<string, string> extraHeaders = null);
 
         /// <summary>
+        /// temporarily disabled cause of new 'grounds' implementation
         /// Updates or creates the device.
         /// Use this method if you want to be in full control on how the device gets created.
         /// </summary>
@@ -61,9 +63,10 @@ namespace att.iot.client
         /// <returns>
         /// True if successful, otherwise false
         /// </returns>
-        bool UpdateDevice(string content, Dictionary<string, string> extraHeaders = null);
+        //bool UpdateDevice(string content, Dictionary<string, string> extraHeaders = null);
 
         /// <summary>
+        /// temporarily disabled cause of new 'grounds' implementation
         /// Simple way to update a devce. 
         /// For mor advanced features, use <see cref="IServer.UpdateDevice"/>
         /// </summary>
@@ -73,10 +76,11 @@ namespace att.iot.client
         /// <returns>
         /// true when succesfull
         /// </returns>
-        bool UpdateDevice(string name, string description, bool activityEnabled = false);
+        //bool UpdateDevice(string name, string description, bool activityEnabled = false);
 
 
         /// <summary>
+        /// temporarily disabled cause of new 'grounds' implementation
         /// Simple way to create a devce.
         /// </summary>
         /// <param name="credentials">The credentials for the gateway and client.</param>
@@ -86,7 +90,7 @@ namespace att.iot.client
         /// <returns>
         /// True if successful, otherwise false
         /// </returns>
-        bool CreateDevice(string name, string description, bool activityEnabled = false);
+        //bool CreateDevice(string name, string description, bool activityEnabled = false);
 
         /// <summary>
         /// Updates or creates the asset.
@@ -110,9 +114,10 @@ namespace att.iot.client
         bool UpdateAsset(int assetId, string name, string description, bool isActuator, string type, AssetStyle style = AssetStyle.Undefined);
 
         /// <summary>
+        /// temporarily disabled cause of new 'grounds' implementation
         /// Deletes the device.
         /// </summary>
-        void DeleteDevice();
+        //void DeleteDevice();
 
         /// <summary>
         /// sends the asset value to the server.
