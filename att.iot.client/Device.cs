@@ -246,7 +246,7 @@ namespace att.iot.client
 
         string getTopicPath(int assetId)
         {
-            return string.Format("client/{0}/out/asset/{1}_{2}/state", _clientId, DeviceId, assetId);
+            return string.Format("client/{0}/out/device/{1}/asset/{2}/state", _clientId, DeviceId, assetId);
         }
 
         /// <summary>
@@ -560,11 +560,6 @@ namespace att.iot.client
         //    }
         //}
 
-        string getRemoteAssetId(int assetId)
-        {
-            return string.Format("{0}_{1}", DeviceId, assetId);
-        }
-
         /// <summary>
         /// Updates or creates the asset.
         /// </summary>
@@ -576,7 +571,7 @@ namespace att.iot.client
             try
             {
                 string contentStr = content.ToString();
-                string uri = "Asset/" + getRemoteAssetId(asset);
+                string uri = "api/device/" + _deviceId + "/Asset/" + asset.ToString();
                 if (_logger != null)
                     _logger.Trace("asset update request\nURI: {0}\nvalue: {1}", uri, contentStr);
                 HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Put, uri);
@@ -638,7 +633,7 @@ namespace att.iot.client
                     content = string.Format("{{ \"is\" : \"{0}\", \"name\" : \"{1}\", \"description\" : \"{2}\", \"deviceId\": \"{3}\", \"style\": \"{4}\", \"profile\" : {{ \"type\" : \"{5}\" }}}}", isActuator == true ? "actuator" : "sensor", name, description, DeviceId, style, type);
 
                 string contentStr = content.ToString();
-                string uri = "api/Asset/" + getRemoteAssetId(assetId);
+                string uri = "api/device/" + _deviceId +  "/Asset/" + assetId.ToString();
                 if (_logger != null)
                     _logger.Trace("asset update request\nURI: {0}\nvalue: {1}", uri, contentStr);
                 HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Put, uri);
@@ -781,7 +776,7 @@ namespace att.iot.client
             string toSend = PrepareValueForSendingHTTP(value);
             try
             {
-                string uri = "asset/" + getRemoteAssetId(asset) + "/state";
+                string uri = "device/" + DeviceId + "/asset/" + asset.ToString() + "/state";
                 if (_logger != null)
                     _logger.Trace("send asset value over HTTP request\nURI: {0}\nvalue: {1}", uri, toSend);
                 HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Put, uri);
