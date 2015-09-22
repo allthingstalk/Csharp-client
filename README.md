@@ -4,7 +4,7 @@
 
 C# Client library for connecting internet of things applications to the AllThingsTalk platform
 
-## features
+## Features
 supports: 
 
 - creating, updating & deleting devices
@@ -19,11 +19,12 @@ Depends on:
 - [Newtonsoft.json](https://www.nuget.org/packages/Newtonsoft.Json/) for working with Json data.
 - [m2mqtt](https://m2mqtt.codeplex.com/) mqtt library for pub-sub communication.
 
-## installation
+## Installation
 There's a nuget package available at: [https://www.nuget.org/packages/att.iot.client/](https://www.nuget.org/packages/att.iot.client/) for easy installation.
 
-## usage
-### full demo app
+## Usage
+
+### Full demo app
 The following application will create a new device, add 2 assets to it and will wait for an incomming asset command or until you press a key upon which it will send an asset value to the cloud.  
 The 'MyLogger' object that is used, is a interface implementation that simply writes the text to the console screen (Console.WriteLn)
 
