@@ -5,12 +5,12 @@
     <version>2.1.0.0</version>
     <title>att.iot.client</title>
     <authors>Jan Bogaerts</authors>
-    <owners>Jan Bogaerts</owners>
+    <owners>AllThingsTalk</owners>
     <licenseUrl>https://github.com/allthingstalk/Csharp-client/blob/master/license.md</licenseUrl>
     <projectUrl>https://github.com/allthingstalk/Csharp-client</projectUrl>
     <iconUrl>https://github.com/allthingstalk/Csharp-client/blob/master/logo_badge_50x50.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>A C# client library for connecting internet of things applications running on windows 10 for devices, to the AllthingsTalk platform. It provides the communication layer, both HTTP and pub-sub to the cloud for systems that perform home automation, smart metering, remote sensing, telemetry, remote control and much more.</description>
+    <description>Make IOT ideas happen... A C# client library for connecting internet of things applications running on windows 10 for devices, to the AllthingsTalk platform. It provides the communication layer, both HTTP and pub-sub to the cloud for systems that perform home automation, smart metering, remote sensing, telemetry, remote control and much more.</description>
     <releaseNotes>- adds GetAssetState and GetAssets functions
 - improves error handling and logging
 - updated builds for new win 10 release
