@@ -1,6 +1,6 @@
 ﻿{
   "dependencies": {
-    "att.iot.client": "2.1.0",
+    "att.iot.client": "3.0.0",
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.0.0",
     "Newtonsoft.Json": "7.0.1"
   },
