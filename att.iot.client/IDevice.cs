@@ -42,53 +42,6 @@ namespace att.iot.client
         string DeviceId { get; set; }
 
         /// <summary>
-        /// Updates or creates the device.
-        /// Use this method if you want to be in full control on how the device gets created.
-        /// </summary>
-        /// <param name="content">The device definition as a json object.</param>
-        /// <param name="extraHeaders">any optional extra headers that should be included in the message.</param>
-        /// <returns>
-        /// True if successful, otherwise false
-        /// </returns>
-        bool UpdateDevice(JObject content, Dictionary<string, string> extraHeaders = null);
-
-        /// <summary>
-        /// Updates or creates the device.
-        /// Use this method if you want to be in full control on how the device gets created.
-        /// </summary>
-        /// <param name="content">The device definition as a string (json format).</param>
-        /// <param name="extraHeaders">any optional extra headers that should be included in the message.</param>
-        /// <returns>
-        /// True if successful, otherwise false
-        /// </returns>
-        bool UpdateDevice(string content, Dictionary<string, string> extraHeaders = null);
-
-        /// <summary>
-        /// Simple way to update a devce. 
-        /// For mor advanced features, use <see cref="IServer.UpdateDevice"/>
-        /// </summary>
-        /// <param name="name">The name.</param>
-        /// <param name="description">The description.</param>
-        /// <param name="activityEnabled">if set to <c>true</c>, historical data will be stored for all the assets on this device.</param>
-        /// <returns>
-        /// true when succesfull
-        /// </returns>
-        bool UpdateDevice(string name, string description, bool activityEnabled = false);
-
-
-        /// <summary>
-        /// Simple way to create a devce.
-        /// </summary>
-        /// <param name="credentials">The credentials for the gateway and client.</param>
-        /// <param name="name">The name.</param>
-        /// <param name="description">The description.</param>
-        /// <param name="activityEnabled">if set to <c>true</c>, historical data will be stored for all the assets on this device.</param>
-        /// <returns>
-        /// True if successful, otherwise false
-        /// </returns>
-        bool CreateDevice(string name, string description, bool activityEnabled = false);
-
-        /// <summary>
         /// Updates or creates the asset.
         /// </summary>
         /// <param name="asset">The id of the asset (local to your device).</param>
@@ -109,10 +62,6 @@ namespace att.iot.client
         /// </returns>
         bool UpdateAsset(int assetId, string name, string description, bool isActuator, string type, AssetStyle style = AssetStyle.Undefined);
 
-        /// <summary>
-        /// Deletes the device.
-        /// </summary>
-        void DeleteDevice();
 
         /// <summary>
         /// sends the asset value to the server.
