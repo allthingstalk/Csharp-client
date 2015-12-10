@@ -63,31 +63,16 @@ namespace Blinky
         {
             _logger = new MyLogger();
             _device = new Device("your client id", "your client key", _logger);
-            _device.DeviceId = (string)ApplicationData.Current.LocalSettings.Values["deviceId"];
+            _device.DeviceId = "you device id";
             _device.ActuatorValue += _server_ActuatorValue;
 
-            bool success;
-            //create or update the device in the cloud.
-            if (string.IsNullOrEmpty(_device.DeviceId) == true)
-                success = _device.CreateDevice("win10 demo device", "a windows 10 devices");
-            else
-                success = _device.UpdateDevice("win10 demo device", "a windows 10 device");
+            //update or create the assets on the device
+            _device.UpdateAsset(1, "Knob", "a rotary knob", false, "{'type': 'integer', 'minimum': 0, 'maximum': 1023}");
+            _device.UpdateAsset(3, "push button", "a virtual push button", false, "boolean");
+            _device.UpdateAsset(4, "Red led", "a test sensor", true, "boolean");
 
-            if (success)
-            {
-                //store the device id in the settings, so we can reuse it later on.
-                ApplicationData.Current.LocalSettings.Values["deviceId"] = _device.DeviceId;
-
-                //update or create the assets on the device
-                _device.UpdateAsset(1, "Knob", "a rotary knob", false, "{'type': 'integer', 'minimum': 0, 'maximum': 1023}");
-                _device.UpdateAsset(3, "push button", "a virtual push button", false, "boolean");
-                _device.UpdateAsset(4, "Red led", "a test sensor", true, "boolean");
-
-                //send a value to the platform
-                _device.Send(2, "true");
-            }
-            else
-                ApplicationData.Current.LocalSettings.Values["deviceId"] = "";                                  //make certain that there is no device id stored anymore, something went wrong during the create/update of the device.
+            //send a value to the platform
+            _device.Send(2, "true");
         }
 
         private void _server_ActuatorValue(object sender, ActuatorData e)
