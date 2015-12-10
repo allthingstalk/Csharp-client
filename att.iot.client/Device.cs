@@ -397,67 +397,6 @@ namespace att.iot.client
             }
         }
 
-
-        /// <summary>
-        /// temporarily disabled cause of new 'grounds' implementation
-        /// Simple way to create a devce. 
-        /// For mor advanced features, use <see cref="IServer.UpdateDevice"/>
-        /// When succesful, the <see cref="Device.DeviceId"/> will be set.
-        /// </summary>
-        /// <param name="name">The name.</param>
-        /// <param name="description">The description.</param>
-        /// <param name="activityEnabled">if set to <c>true</c>, historical data will be stored for all the assets on this device.</param>
-        /// <returns>
-        /// True if successful, otherwise false
-        /// </returns>
-        //public bool CreateDevice(string name, string description, bool activityEnabled = false)
-        //{
-        //    try
-        //    {
-        //        string content = string.Format(@"{{ 'description' : '{0}', 'name' : '{1}', 'activityEnabled': {2} }}", description, name, activityEnabled.ToString().ToLower());
-        //        string uri = "Device";
-        //        if (_logger != null)
-        //            _logger.Trace("create device request\nURI: {0}\nvalue: {1}", uri, content);
-
-        //        HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, uri);
-        //        PrepareRequestForAuth(request);
-        //        request.Content = new StringContent(content, Encoding.UTF8, "application/json");
-        //        var task = _http.SendAsync(request, HttpCompletionOption.ResponseContentRead);
-        //        using (var result = task.Result)
-        //        {
-        //            using (HttpContent resContent = result.Content)
-        //            {
-        //                var contentTask = resContent.ReadAsStringAsync();                                          // ... Read the string.
-        //                string resultContent = contentTask.Result;
-
-        //                if (_logger != null)
-        //                    _logger.Trace("create device response: {0}", resultContent);
-        //                result.EnsureSuccessStatusCode();
-        //                if (resultContent != null && resultContent.Length >= 50)
-        //                {
-        //                    JToken obj = JToken.Parse(resultContent);
-        //                    _httpError = false;
-        //                    DeviceId = obj["id"].Value<string>();
-        //                    if (_logger != null)
-        //                        _logger.Trace("device updated: {0}", resultContent);
-        //                    return true;
-        //                }
-        //                else
-        //                    throw new Exception("Invalid result received from server, can't find Device Id");
-        //            }
-        //        }
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        if (_httpError == false && _logger != null)
-        //            _logger.Error("HTTP comm problem: {0}", e.ToString());
-        //        else if (_logger == null)
-        //            throw;
-        //        _httpError = true;
-        //        return false;
-        //    }
-        //}
-
         string getRemoteAssetId(int assetId)
         {
             return string.Format("{0}_{1}", DeviceId, assetId);
@@ -575,52 +514,6 @@ namespace att.iot.client
             request.Headers.Add("Auth-ClientKey", _clientKey);
             request.Headers.Add("Auth-ClientId", _clientId);
         }
-
-        /// <summary>
-        /// temporarily disabled cause of new 'grounds' implementation
-        /// Deletes the device.
-        /// </summary>
-        //public void DeleteDevice()
-        //{
-        //    if (string.IsNullOrEmpty(DeviceId)) throw new Exception("Device id not set");
-        //    try
-        //    {
-        //        string uri = "Device/" + DeviceId;
-        //        if (_logger != null)
-        //            _logger.Trace("Delete device; URI: {0}", uri);
-        //        HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Delete, uri);
-        //        PrepareRequestForAuth(request);
-        //        var task = _http.SendAsync(request, HttpCompletionOption.ResponseContentRead);
-        //        using (var result = task.Result)
-        //        {
-        //            if (result.StatusCode == HttpStatusCode.NotFound)
-        //            {
-        //                _httpError = false;
-        //                if (_logger != null)
-        //                    _logger.Trace("device not found on cloudapp: {0}", DeviceId);
-        //            }
-        //            else if (result.IsSuccessStatusCode == true)
-        //            {
-        //                DeviceId = null;
-        //                _httpError = false;
-        //                if (_logger != null)
-        //                    _logger.Trace("device deleted: {0}", DeviceId);
-        //            }
-        //            else
-        //                result.EnsureSuccessStatusCode();
-        //        }
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        if (_httpError == false && _logger != null)
-        //        {
-        //            _logger.Error("HTTP comm problem: {0}", e.ToString());
-        //            _httpError = true;
-        //        }
-        //        else if (_logger == null)
-        //            throw;
-        //    }
-        //}
 
         /// <summary>
         /// requests the primary asset id and it's profile type of the  device.
