@@ -31,8 +31,8 @@ namespace demoApp
         {
             Init();
             //update or create the assets on the device
-			_device.UpdateAsset(1, "test actuator", "a test actuator", true, "bool");
-			_device.UpdateAsset(2, "test sensor", "a test sensor", false, "bool");
+			_device.UpdateAsset(1, "test actuator", "a test actuator", true, "boolean");
+			_device.UpdateAsset(2, "test sensor", "a test sensor", false, "boolean");
 
 			//wait to continue so that we can send a value from the cloud to the app.
 			Console.ReadKey();                                          

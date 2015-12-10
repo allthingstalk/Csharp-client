@@ -62,7 +62,7 @@ namespace doorbell
             _device = new Device(clientId, clientKey);
             _device.DeviceId = deviceId;
 
-            _device.UpdateAsset(doorBellPin, "Doorbell", "doorbell", true, "boolean");
+            _device.UpdateAsset(doorBellPin, "Doorbell", "doorbell", false, "boolean");
         }
 
         private void InitGPIO()

@@ -1,4 +1,5 @@
 ﻿using att.iot.client;
+using GrovePi;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -27,14 +28,56 @@ namespace motionDetector
         const string clientId = "your client id";
         const string clientKey = "your client key";
 
-        //GrovePi.Sensors.
-        bool sensorPrev = false;
-        DispatcherTimer timer;
+        const int _pin = 2;
+        GrovePi.Sensors.IButtonSensor _btn;
+        bool _sensorPrev = false;
+        DispatcherTimer _timer;
         static Device _device;
 
         public MainPage()
         {
             this.InitializeComponent();
+
+            InitGPIO();
+            Init();
+
+            _timer = new DispatcherTimer();
+            _timer.Interval = TimeSpan.FromMilliseconds(300);
+            _timer.Tick += Timer_Tick;
+            _timer.Start();
+        }
+
+
+        private void Timer_Tick(object sender, object e)
+        {
+            try
+            {
+                bool isPressed = _btn.CurrentState == GrovePi.Sensors.SensorStatus.On;
+                if (_sensorPrev != isPressed)
+                {
+                    _device.Send(_pin, isPressed.ToString().ToLower());        //important: cast to lower so the cloud can interprete the data correclty.If we don't do this, the value will not be stored in the cloud.
+                    _sensorPrev = isPressed;
+                }
+            }
+            catch (Exception ex)
+            {
+                //The grovePi lib can still occationally give an unexpectd error, just continue
+            }
+        }
+
+        private void Init()
+        {
+            _device = new Device(clientId, clientKey);
+            _device.DeviceId = deviceId;
+
+            _device.UpdateAsset(_pin, "Doorbell", "doorbell", false, "boolean");
+        }
+
+        private void InitGPIO()
+        {
+            _btn = DeviceFactory.Build.ButtonSensor(Pin.DigitalPin2);
+            if (_btn == null)
+                throw new Exception("Failed to intialize button.");
         }
     }
 }

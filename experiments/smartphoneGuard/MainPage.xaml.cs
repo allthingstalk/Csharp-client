@@ -15,6 +15,9 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
+/*Note: currently, the buzzer is not yet supported on win10 devices. We have replaced the buzzer with a led for this experiment.
+*/
+
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
 namespace smartphoneGuard
@@ -28,7 +31,7 @@ namespace smartphoneGuard
         const string clientId = "your client id";
         const string clientKey = "your client key";
 
-        GrovePi.Sensors.IBuzzer _buzzer;
+        GrovePi.Sensors.ILed _buzzer;
         const int _pin = 2;
         static Device _device;
 
@@ -68,7 +71,7 @@ namespace smartphoneGuard
 
         private void InitGPIO()
         {
-            _buzzer = DeviceFactory.Build.Buzzer(Pin.DigitalPin2);
+            _buzzer = DeviceFactory.Build.Led(Pin.DigitalPin2);
             if (_buzzer == null)
                 throw new Exception("Failed to intialize v motor - buzzer.");
         }
