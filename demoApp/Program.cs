@@ -33,9 +33,10 @@ namespace demoApp
             //update or create the assets on the device
 			_device.UpdateAsset(1, "test actuator", "a test actuator", true, "boolean");
 			_device.UpdateAsset(2, "test sensor", "a test sensor", false, "boolean");
+            _device.UpdateAsset(3, "test sensor 2", "a test sensor without type, defaults to string, does not overwrite manual changes on platform", false, null);
 
-			//wait to continue so that we can send a value from the cloud to the app.
-			Console.ReadKey();                                          
+            //wait to continue so that we can send a value from the cloud to the app.
+            Console.ReadKey();                                          
 
 			//send a value to the platform
 			_device.Send(2, "true");

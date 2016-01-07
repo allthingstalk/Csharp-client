@@ -459,7 +459,7 @@ namespace att.iot.client
         /// <param name="name">The name of the asset.</param>
         /// <param name="description">The description.</param>
         /// <param name="isActuator">if set to <c>true</c> an actuator should be created, otherwise a sensor.</param>
-        /// <param name="type">The profile type of the asst (string, int, float, bool, DateTime, TimeSpan).</param>
+        /// <param name="type">The profile type of the asst (Null, string, integer, number, boolean or a full profile definition, see: (http://docs.smartliving.io/smartliving-maker/profiles/) ).</param>
         /// <returns>
         /// True if successful, otherwise false
         /// </returns>
@@ -469,7 +469,9 @@ namespace att.iot.client
             {
                 string content;
 
-                if (type.StartsWith("{"))                                           //check if it's a complex type, if so, don't add "" between type info
+                if (type == null || type.Length == 0)
+                    content = string.Format("{{ \"is\" : \"{0}\", \"name\" : \"{1}\", \"description\" : \"{2}\", \"deviceId\": \"{3}\", \"style\": \"{4}\" }}", isActuator == true ? "actuator" : "sensor", name, description, DeviceId, style);
+                else if (type.StartsWith("{"))                                           //check if it's a complex type, if so, don't add "" between type info
                     content = string.Format("{{ \"is\" : \"{0}\", \"name\" : \"{1}\", \"description\" : \"{2}\", \"deviceId\": \"{3}\", \"style\": \"{4}\",  \"profile\" : {5} }}", isActuator == true ? "actuator" : "sensor", name, description, DeviceId, style, type);
                 else
                     content = string.Format("{{ \"is\" : \"{0}\", \"name\" : \"{1}\", \"description\" : \"{2}\", \"deviceId\": \"{3}\", \"style\": \"{4}\", \"profile\" : {{ \"type\" : \"{5}\" }}}}", isActuator == true ? "actuator" : "sensor", name, description, DeviceId, style, type);
