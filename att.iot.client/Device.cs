@@ -246,7 +246,7 @@ namespace att.iot.client
 
         string getTopicPath(int assetId)
         {
-            return string.Format("client/{0}/out/asset/{1}_{2}/state", _clientId, DeviceId, assetId);
+            return string.Format("client/{0}/out/device/{1}/asset/{2}/state", _clientId, DeviceId, assetId);
         }
 
         /// <summary>
@@ -413,7 +413,7 @@ namespace att.iot.client
             try
             {
                 string contentStr = content.ToString();
-                string uri = "Asset/" + getRemoteAssetId(asset);
+                string uri = "/device/" + DeviceId + "/asset/" + asset.ToString();
                 if (_logger != null)
                     _logger.Trace("asset update request\nURI: {0}\nvalue: {1}", uri, contentStr);
                 HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Put, uri);
@@ -470,14 +470,14 @@ namespace att.iot.client
                 string content;
 
                 if (type == null || type.Length == 0)
-                    content = string.Format("{{ \"is\" : \"{0}\", \"name\" : \"{1}\", \"description\" : \"{2}\", \"deviceId\": \"{3}\", \"style\": \"{4}\" }}", isActuator == true ? "actuator" : "sensor", name, description, DeviceId, style);
+                    content = string.Format("{{ \"is\" : \"{0}\", \"name\" : \"{1}\", \"description\" : \"{2}\", \"style\": \"{3}\" }}", isActuator == true ? "actuator" : "sensor", name, description, style);
                 else if (type.StartsWith("{"))                                           //check if it's a complex type, if so, don't add "" between type info
-                    content = string.Format("{{ \"is\" : \"{0}\", \"name\" : \"{1}\", \"description\" : \"{2}\", \"deviceId\": \"{3}\", \"style\": \"{4}\",  \"profile\" : {5} }}", isActuator == true ? "actuator" : "sensor", name, description, DeviceId, style, type);
+                    content = string.Format("{{ \"is\" : \"{0}\", \"name\" : \"{1}\", \"description\" : \"{2}\", \"style\": \"{3}\",  \"profile\" : {4} }}", isActuator == true ? "actuator" : "sensor", name, description, style, type);
                 else
-                    content = string.Format("{{ \"is\" : \"{0}\", \"name\" : \"{1}\", \"description\" : \"{2}\", \"deviceId\": \"{3}\", \"style\": \"{4}\", \"profile\" : {{ \"type\" : \"{5}\" }}}}", isActuator == true ? "actuator" : "sensor", name, description, DeviceId, style, type);
+                    content = string.Format("{{ \"is\" : \"{0}\", \"name\" : \"{1}\", \"description\" : \"{2}\", \"style\": \"{3}\", \"profile\" : {{ \"type\" : \"{4}\" }}}}", isActuator == true ? "actuator" : "sensor", name, description, style, type);
 
                 string contentStr = content.ToString();
-                string uri = "api/Asset/" + getRemoteAssetId(assetId);
+                string uri = "/device/" + DeviceId + "/asset/" + assetId.ToString();
                 if (_logger != null)
                     _logger.Trace("asset update request\nURI: {0}\nvalue: {1}", uri, contentStr);
                 HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Put, uri);
@@ -574,7 +574,7 @@ namespace att.iot.client
             string toSend = PrepareValueForSendingHTTP(value);
             try
             {
-                string uri = "asset/" + getRemoteAssetId(asset) + "/state";
+                string uri = "/device/" + DeviceId.ToString() + "/asset/" + asset + "/state";
                 if (_logger != null)
                     _logger.Trace("send asset value over HTTP request\nURI: {0}\nvalue: {1}", uri, toSend);
                 HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Put, uri);
@@ -665,7 +665,7 @@ namespace att.iot.client
         {
             try
             {
-                string uri = "/asset/" + DeviceId + "_" + asset.ToString() + "/state";
+                string uri = "/device/" + DeviceId + "/asset/" + asset.ToString() + "/state";
                 if (_logger != null)
                     _logger.Trace("get asset state; URI: {0}", uri);
                 HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, uri);
