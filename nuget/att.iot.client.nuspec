@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>att.iot.client</id>
-    <version>3.0.0.0</version>
+    <version>3.1.0.0</version>
     <title>att.iot.client</title>
     <authors>Jan Bogaerts</authors>
     <owners>AllThingsTalk</owners>
@@ -11,14 +11,14 @@
     <iconUrl>https://github.com/allthingstalk/Csharp-client/blob/master/logo_badge_50x50.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Make IOT ideas happen... A C# client library for connecting internet of things applications running on windows 10 for devices, to the AllthingsTalk platform. It provides the communication layer, both HTTP and pub-sub to the cloud for systems that perform home automation, smart metering, remote sensing, telemetry, remote control and much more.</description>
-    <releaseNotes>removes api calls that are no longer supported on the server, updates to latest .net versions
+    <releaseNotes>replaces globally unique id's with device-locally unique names, removes api calls that are no longer supported on the server, updates to latest .net versions
     </releaseNotes>
-    <copyright>Copyright 2015</copyright>
+    <copyright>Copyright 2015-2016</copyright>
     <tags>AllThingsTalk IOT pubsub M2M embedded RPI MinnowBoard Galileo Arduino GrovePi embedded windows10 win10</tags>
 	
 	<dependencies>
-      <dependency id="Newtonsoft.Json" version="7.0.1"/>
-    <dependency id="m2mqtt" version="4.1.0.1"/>
+      <dependency id="Newtonsoft.Json" version="8.0.2"/>
+    <dependency id="m2mqtt" version="4.3.0"/>
     </dependencies>
 	
 	<references>
