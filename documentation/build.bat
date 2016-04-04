@@ -1,0 +1,1 @@
+Powershell.exe -ExecutionPolicy Unrestricted -file "xmldoc2md.ps1" -xml "..\att.iot.client.net46\bin\Release\att.iot.client.xml" -xsl "xmldoc2md.xsl" -output "att.iot.client.md"
