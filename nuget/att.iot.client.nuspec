@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>att.iot.client</id>
-    <version>4.0.0.0</version>
+    <version>4.0.0.2</version>
     <title>att.iot.client</title>
     <authors>Jan Bogaerts</authors>
     <owners>AllThingsTalk</owners>
