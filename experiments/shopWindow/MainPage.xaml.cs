@@ -39,10 +39,9 @@ namespace shopWindow
 
         private void _server_ActuatorValue(object sender, ActuatorData e)
         {
-            if (e.Asset == _ledPin)
+            if (e.Asset == _ledPin.ToString())          //asset id from the cloud always arrives as a string (you are free to create with string or int, but it always comes in as string)
             {
-                StringActuatorData data = (StringActuatorData)e;
-                if (data.AsBool() == true)
+                if ((bool)e.Value == true)
                 {
                     _led.ChangeState(GrovePi.Sensors.SensorStatus.On);
                     _device.Send(_ledPin, "true");             //feedback for led

@@ -67,9 +67,9 @@ namespace Blinky
             _device.ActuatorValue += _server_ActuatorValue;
 
             //update or create the assets on the device
-            _device.UpdateAsset(1, "Knob", "a rotary knob", false, "{'type': 'integer', 'minimum': 0, 'maximum': 1023}");
-            _device.UpdateAsset(3, "push button", "a virtual push button", false, "boolean");
-            _device.UpdateAsset(4, "Red led", "a test sensor", true, "boolean");
+            _device.UpdateAsset("1", "Knob", "a rotary knob", false, "{'type': 'integer', 'minimum': 0, 'maximum': 1023}");
+            _device.UpdateAsset("3", "push button", "a virtual push button", false, "boolean");
+            _device.UpdateAsset("4", "Red led", "a test sensor", true, "boolean");
 
             //send a value to the platform
             _device.Send(2, "true");
@@ -77,10 +77,9 @@ namespace Blinky
 
         private void _server_ActuatorValue(object sender, ActuatorData e)
         {
-            if (e.Asset == 4)
+            if (e.Asset == "4")
             {
-                StringActuatorData data = (StringActuatorData)e;
-                if (data.AsBool() == true)
+                if ((bool)e.Value == true)
                 {
                     Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => { RedLed.Fill = redBrush; redLed.ChangeState(GrovePi.Sensors.SensorStatus.On); });
                     _device.Send(4, "true");             //feedback for led

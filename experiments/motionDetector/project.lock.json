@@ -3,10 +3,10 @@
   "version": 1,
   "targets": {
     "UAP,Version=v10.0": {
-      "att.iot.client/3.0.0": {
+      "att.iot.client/4.0.0": {
         "dependencies": {
-          "m2mqtt": "[4.1.0.1, )",
-          "Newtonsoft.Json": "[7.0.1, )"
+          "m2mqtt": "[4.3.0, )",
+          "Newtonsoft.Json": "[8.0.2, )"
         },
         "compile": {
           "lib/uap/att.iot.client.dll": {}
@@ -15,7 +15,7 @@
           "lib/uap/att.iot.client.dll": {}
         }
       },
-      "m2mqtt/4.1.0.1": {
+      "m2mqtt/4.3.0": {
         "compile": {
           "lib/win81/M2Mqtt.WinRT.dll": {}
         },
@@ -1566,10 +1566,10 @@
       }
     },
     "UAP,Version=v10.0/win10-arm": {
-      "att.iot.client/3.0.0": {
+      "att.iot.client/4.0.0": {
         "dependencies": {
-          "m2mqtt": "[4.1.0.1, )",
-          "Newtonsoft.Json": "[7.0.1, )"
+          "m2mqtt": "[4.3.0, )",
+          "Newtonsoft.Json": "[8.0.2, )"
         },
         "compile": {
           "lib/uap/att.iot.client.dll": {}
@@ -1578,7 +1578,7 @@
           "lib/uap/att.iot.client.dll": {}
         }
       },
-      "m2mqtt/4.1.0.1": {
+      "m2mqtt/4.3.0": {
         "compile": {
           "lib/win81/M2Mqtt.WinRT.dll": {}
         },
@@ -3219,10 +3219,10 @@
       }
     },
     "UAP,Version=v10.0/win10-arm-aot": {
-      "att.iot.client/3.0.0": {
+      "att.iot.client/4.0.0": {
         "dependencies": {
-          "m2mqtt": "[4.1.0.1, )",
-          "Newtonsoft.Json": "[7.0.1, )"
+          "m2mqtt": "[4.3.0, )",
+          "Newtonsoft.Json": "[8.0.2, )"
         },
         "compile": {
           "lib/uap/att.iot.client.dll": {}
@@ -3231,7 +3231,7 @@
           "lib/uap/att.iot.client.dll": {}
         }
       },
-      "m2mqtt/4.1.0.1": {
+      "m2mqtt/4.3.0": {
         "compile": {
           "lib/win81/M2Mqtt.WinRT.dll": {}
         },
@@ -4844,10 +4844,10 @@
       }
     },
     "UAP,Version=v10.0/win10-x64": {
-      "att.iot.client/3.0.0": {
+      "att.iot.client/4.0.0": {
         "dependencies": {
-          "m2mqtt": "[4.1.0.1, )",
-          "Newtonsoft.Json": "[7.0.1, )"
+          "m2mqtt": "[4.3.0, )",
+          "Newtonsoft.Json": "[8.0.2, )"
         },
         "compile": {
           "lib/uap/att.iot.client.dll": {}
@@ -4856,7 +4856,7 @@
           "lib/uap/att.iot.client.dll": {}
         }
       },
-      "m2mqtt/4.1.0.1": {
+      "m2mqtt/4.3.0": {
         "compile": {
           "lib/win81/M2Mqtt.WinRT.dll": {}
         },
@@ -6502,10 +6502,10 @@
       }
     },
     "UAP,Version=v10.0/win10-x64-aot": {
-      "att.iot.client/3.0.0": {
+      "att.iot.client/4.0.0": {
         "dependencies": {
-          "m2mqtt": "[4.1.0.1, )",
-          "Newtonsoft.Json": "[7.0.1, )"
+          "m2mqtt": "[4.3.0, )",
+          "Newtonsoft.Json": "[8.0.2, )"
         },
         "compile": {
           "lib/uap/att.iot.client.dll": {}
@@ -6514,7 +6514,7 @@
           "lib/uap/att.iot.client.dll": {}
         }
       },
-      "m2mqtt/4.1.0.1": {
+      "m2mqtt/4.3.0": {
         "compile": {
           "lib/win81/M2Mqtt.WinRT.dll": {}
         },
@@ -8127,10 +8127,10 @@
       }
     },
     "UAP,Version=v10.0/win10-x86": {
-      "att.iot.client/3.0.0": {
+      "att.iot.client/4.0.0": {
         "dependencies": {
-          "m2mqtt": "[4.1.0.1, )",
-          "Newtonsoft.Json": "[7.0.1, )"
+          "m2mqtt": "[4.3.0, )",
+          "Newtonsoft.Json": "[8.0.2, )"
         },
         "compile": {
           "lib/uap/att.iot.client.dll": {}
@@ -8139,7 +8139,7 @@
           "lib/uap/att.iot.client.dll": {}
         }
       },
-      "m2mqtt/4.1.0.1": {
+      "m2mqtt/4.3.0": {
         "compile": {
           "lib/win81/M2Mqtt.WinRT.dll": {}
         },
@@ -9785,10 +9785,10 @@
       }
     },
     "UAP,Version=v10.0/win10-x86-aot": {
-      "att.iot.client/3.0.0": {
+      "att.iot.client/4.0.0": {
         "dependencies": {
-          "m2mqtt": "[4.1.0.1, )",
-          "Newtonsoft.Json": "[7.0.1, )"
+          "m2mqtt": "[4.3.0, )",
+          "Newtonsoft.Json": "[8.0.2, )"
         },
         "compile": {
           "lib/uap/att.iot.client.dll": {}
@@ -9797,7 +9797,7 @@
           "lib/uap/att.iot.client.dll": {}
         }
       },
-      "m2mqtt/4.1.0.1": {
+      "m2mqtt/4.3.0": {
         "compile": {
           "lib/win81/M2Mqtt.WinRT.dll": {}
         },
@@ -11411,8 +11411,8 @@
     }
   },
   "libraries": {
-    "att.iot.client/3.0.0": {
-      "sha512": "ZdR0XTehxuYNROxM/eaBXQ0PZxebgHvxGSDNgYnS4gO5DH7k9o/F48nGobR+72dNVHIzdu3vN5bmVKmI5y2G8w==",
+    "att.iot.client/4.0.0": {
+      "sha512": "13qt2y5dpV9hs2gpN1ez4+qoJZYDIVExDH6NEQx6zx/NkoKkn+uA0kBlo+zQrYg/fBL+pJyT78XbLXABs1y7Qw==",
       "type": "Package",
       "files": [
         "[Content_Types].xml",
@@ -11423,20 +11423,20 @@
         "lib/net452/att.iot.client.dll",
         "lib/net46/att.iot.client.dll",
         "lib/uap/att.iot.client.dll",
-        "package/services/metadata/core-properties/0e4bba075dac414e8ba8a0f685f674b0.psmdcp"
+        "package/services/metadata/core-properties/a00b9aa8548b4a45ac7b896707664168.psmdcp"
       ]
     },
-    "m2mqtt/4.1.0.1": {
-      "sha512": "GDk49+l4JvNhBlaQGygRaUeqXRf4HPltW+CD+94294jdHuJnOYs90f8itmVWn37aWEiRqosXgJcM2vn00qb4sA==",
+    "m2mqtt/4.3.0": {
+      "sha512": "2A1uM20uxuovQKPA0dkZUqD9gUpIMaX7KxdLiVM7IEXdPRL709hGuudHnvlDxm2/6b2LcOjshrYGVG9vdpipag==",
       "type": "Package",
       "files": [
         "[Content_Types].xml",
         "_rels/.rels",
+        "lib/net39-cf/DeployFileList.txt",
+        "lib/net39-cf/M2Mqtt.NetCf39.dll",
+        "lib/net39-cf/M2Mqtt.NetCf39.pdb",
         "lib/net45/M2Mqtt.Net.dll",
         "lib/net45/M2Mqtt.Net.pdb",
-        "lib/netcf39/DeployFileList.txt",
-        "lib/netcf39/M2Mqtt.NetCf39.dll",
-        "lib/netcf39/M2Mqtt.NetCf39.pdb",
         "lib/netmf42/be/M2Mqtt.NetMf.pdb",
         "lib/netmf42/be/M2Mqtt.NetMf.pdbx",
         "lib/netmf42/be/M2Mqtt.NetMf.pe",
@@ -11460,7 +11460,7 @@
         "lib/wpa81/M2Mqtt.WinRT.pdb",
         "lib/wpa81/M2Mqtt.WinRT.pri",
         "M2Mqtt.nuspec",
-        "package/services/metadata/core-properties/dd1e659d07ff460ba0c4bd8d252ace20.psmdcp"
+        "package/services/metadata/core-properties/544fa7de1c7d493085a0648dcf3b10a2.psmdcp"
       ]
     },
     "Microsoft.CSharp/4.0.0": {
@@ -14837,7 +14837,7 @@
   },
   "projectFileDependencyGroups": {
     "": [
-      "att.iot.client >= 3.0.0",
+      "att.iot.client >= 4.0.0",
       "Microsoft.NETCore.UniversalWindowsPlatform >= 5.0.0",
       "Newtonsoft.Json >= 8.0.2"
     ],

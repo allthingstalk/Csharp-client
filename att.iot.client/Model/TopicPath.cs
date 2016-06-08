@@ -12,13 +12,12 @@ namespace att.iot.client
     public class TopicPath
     {
         #region const
-        const string MANAGEMENTCHANNEL = "m";       //from command
-        const string FEEDCHANNEL = "f";
-        const string SETTERCHANNEL = "s";
+        const string COMMANDCHANNEL = "command";       //from command
+        const string EVENTCHANNEL = "event";
+        const string STATECHANNEL = "state";
         const string GATEWAYENTITY = "gateway";
         const string DEVICEENTITY = "device";
         const string ASSETENTITY = "asset";
-        const string THINGENTITY = "t";
         const string CLIENTENTITY = "client"; 
         #endregion
 
@@ -45,64 +44,28 @@ namespace att.iot.client
             if (path[0] == CLIENTENTITY)
             {
                 ClientId = path[1];
-                if (path[3] == GATEWAYENTITY)
+                Direction = path[2];
+                int currentPos = 3;
+                if (path[currentPos] == GATEWAYENTITY)
                 {
-                    Gateway = path[4];
-
-                    if (path.Length == 10)
-                    {
-                        string[] parts = path[6].Split('_');
-                        DeviceId = parts[parts.Length - 1];
-                        parts = path[8].Split('_');
-                        AssetId = GetAssetId(parts, 2);
-                        IsSetter = path[9] == MANAGEMENTCHANNEL;
-                    }
-                    else if (path.Length == 8)
-                    {
-                        string[] parts = path[6].Split('_');
-                        if (path[5] == DEVICEENTITY)
-                            DeviceId = parts[parts.Length - 1];
-                        else
-                            AssetId = GetAssetId(parts, 1);
-                        IsSetter = path[7] == MANAGEMENTCHANNEL;
-                    }
-                    else if (path.Length == 6)
-                        IsSetter = true;
+                    currentPos++;
+                    Gateway = path[currentPos++];
                 }
-                else if (path[3] == DEVICEENTITY)
+                if (path[currentPos] == DEVICEENTITY)
                 {
-                    string[] parts = path[4].Split('_');
-                    DeviceId = parts[parts.Length - 1];
-                    if (path.Length == 6)
-                        IsSetter = path[5] == MANAGEMENTCHANNEL;
-                    else
-                    {
-                        parts = path[6].Split('_');
-                        AssetId = GetAssetId(parts, 1);
-                        IsSetter = path[7] == MANAGEMENTCHANNEL;
-                    }
+                    currentPos++;
+                    DeviceId = path[currentPos++];
                 }
-                else
-                    throw new NotSupportedException("topic structure invalid, pos 2 should be 'gateway'");
-                
+                if (path[currentPos] == ASSETENTITY)
+                {
+                    currentPos++;
+                    AssetId = path[currentPos++];
+                }
+                Mode = path[currentPos];
             }
             else
                 throw new NotSupportedException("topic structure invalid, pos 0 should be 'client'");
                 
-        }
-
-        private int[] GetAssetId(string[] parts, int offset)
-        {
-            int[] res = new int[parts.Length - offset];
-            for (int i = offset; i < parts.Length; i++)                                                          //the first item is the id of the gateway, followed by the id of the device, whic
-            {
-                int val;
-                if (int.TryParse(parts[i], out val) == true)
-                    res[i - offset] = val;
-                else
-                    throw new InvalidOperationException(string.Format("failed to convert asset id to int[], problem with: {0} in {1}", parts[i], string.Join("_", parts)));
-            }
-            return res;
         }
 
 
@@ -116,7 +79,8 @@ namespace att.iot.client
             this.DeviceId = source.DeviceId;
             this.Gateway = source.Gateway;
             this.ClientId = source.ClientId;
-            this.IsSetter = source.IsSetter;
+            this.Mode = source.Mode;
+            this.Direction = source.Direction;
         }
 
         #endregion
@@ -145,70 +109,7 @@ namespace att.iot.client
         /// </value>
         public string DeviceId { get; set; }
 
-        /// <summary>
-        /// returns the device id, as formatted for the cloud app.
-        /// If there is a gateway known, the gateway id will be prepended to the device id, otherwise, only the device id is used.
-        /// </summary>
-        /// <value>
-        /// The remote device identifier.
-        /// </value>
-        public string RemoteDeviceId
-        {
-            get 
-            {
-                if (string.IsNullOrEmpty(Gateway) == false)
-                    return string.Format("{0}_{1}", Gateway, DeviceId);
-                else
-                    return DeviceId;
-            }
-            set
-            {
-                string[] temp = value.Split('_');
-                if (temp.Length == 2)
-                {
-                    Gateway = temp[0];
-                    DeviceId = temp[1];
-                }
-                else
-                    throw new FormatException("not a device id");
-            }
-        }
 
-        /// <summary>
-        /// gets/sets the full id as used by the cloud.
-        /// Format: {GatewayId}_{DeviceId}_{AssetId}
-        /// </summary>
-        public string RemoteId
-        {
-            get
-            {
-                return this.ToString();
-            }
-            set
-            {
-                string[] temp = value.Split('_');
-                if (temp.Length > 2)
-                {
-                    Gateway = temp[0];
-                    DeviceId = temp[1];
-                    StoreAssetId(temp, 2);
-                }
-                else
-                    throw new FormatException("not a full remote id");
-            }
-        }
-
-        /// <summary>
-        /// Gets the device identifier as a byte value.
-        /// </summary>
-        public byte DeviceIdAsNr
-        {
-            get
-            {
-                int res = int.Parse(DeviceId);
-                return (byte)res;
-            }
-        }
 
         /// <summary>
         /// Gets or sets the (local) asset identifier  to issue the command to (if any).
@@ -218,123 +119,26 @@ namespace att.iot.client
         /// <value>
         /// The asset identifier.
         /// </value>
-        public int[] AssetId { get; set; }
+        public string AssetId { get; set; }
+
 
         /// <summary>
-        /// Gets or sets the (local) asset identifier string.
-        /// Warning: the setter expects a deviceId in front (not stored)
-        /// </summary>
-        /// <value>
-        /// The asset identifier string.
-        /// </value>
-        public string AssetIdStr
-        {
-            get
-            {
-                return TopicPath.BuildAssetStr(AssetId);
-            }
-            set
-            {
-                if (string.IsNullOrEmpty(value) == false)
-                {
-                    string[] parts = value.Split('_');
-                    if (parts.Length == 1)                                          //if it's a very simple asset id with no subparts, then don't try to split it up
-                        StoreAssetId(parts, 0);
-                    else
-                        StoreAssetId(parts, 1);                                     //we need to remove the device part from it?
-                }
-                else
-                    AssetId = null;
-            }
-        }
-
-        /// <summary>
-        /// Stores the asset identifier. 
-        /// </summary>
-        /// <param name="parts">The parts.</param>
-        /// <param name="offset">The offset into the list where the asset id starts.</param>
-        private void StoreAssetId(string[] parts, int offset)
-        {
-            AssetId = new int[parts.Length - offset];
-            for (int i = offset; i < parts.Length; i++)
-            {
-                int val;
-                if (int.TryParse(parts[i], out val) == true)
-                    AssetId[i - offset] = val;
-                else
-                    throw new InvalidOperationException(string.Format("can't convert string to asset id: {0}", string.Join("_", parts)));
-            }
-        }
-
-        /// <summary>
-        /// Builds an asset id string from the specified assetpath.
-        /// </summary>
-        /// <param name="assetpath">The asset identifier.</param>
-        /// <returns></returns>
-        public static string BuildAssetStr(int[] assetpath)
-        {
-            if (assetpath != null)
-            {
-                StringBuilder res = new StringBuilder();
-                if (assetpath.Length > 0)
-                {
-                    res.Append(assetpath[0]);
-                    for (int i = 1; i < assetpath.Length; i++)
-                    {
-                        res.Append("_");
-                        res.Append(assetpath[i]);
-                    }
-                }
-                return res.ToString();
-            }
-            return null;
-        }
-
-        /// <summary>
-        /// Gets/sets the asset identifier as formatted for the cloud app.
-        /// </summary>
-        /// <value>
-        /// The remote asset identifier.
-        /// </value>
-        public string RemoteAssetId
-        {
-            get { return string.Format("{0}_{1}", RemoteDeviceId, AssetIdStr); }
-            set
-            {
-                if (string.IsNullOrEmpty(value) == false)
-                {
-                    string[] parts = value.Split('_');
-                    if (parts.Length > 2)
-                    {
-                        Gateway = parts[0];
-                        DeviceId = parts[1];
-                        AssetId = new int[parts.Length - 2];
-                        for (int i = 2; i < parts.Length; i++)
-                        {
-                            int val;
-                            if (int.TryParse(parts[i], out val) == true)
-                                AssetId[i - 2] = val;
-                            else
-                                throw new InvalidOperationException(string.Format("can't convert string to asset id: {0}", value));
-                        }
-                    }
-                }
-                else
-                {
-                    AssetId = null;
-                    DeviceId = null;
-                    Gateway = null;
-                }
-            }
-        }
-
-        /// <summary>
-        /// when true, it's a data feed from cloud to client.  When false, and the sensorId is declared, then it's a command
+        /// Determins the mode of the topic path: 
+        /// - state: the value of an asset
+        /// - command: the new value for an actuator
+        /// - event: device/asset removed or added.
         /// </summary>
         /// <value>
         ///   <c>true</c> if this instance is setter; otherwise, <c>false</c>.
         /// </value>
-        public bool IsSetter { get; set; }
+        public string Mode { get; set; }
+
+        /// <summary>
+        /// determines the direction of the message:
+        /// - out: from device to cloud
+        /// - in: from cloud to device
+        /// </summary>
+        public string Direction { get; set; }
 
         /// <summary>
         /// Returns a <see cref="System.String" /> that represents this instance.
@@ -344,17 +148,7 @@ namespace att.iot.client
         /// </returns>
         public override string ToString()
         {
-            string assetId;
-            if (string.IsNullOrEmpty(DeviceId) == false)
-            {
-                if (string.IsNullOrEmpty(Gateway) == false)
-                    assetId = string.Format("{0}_{1}_{2}", Gateway, DeviceId, AssetIdStr);
-                else
-                    assetId = string.Format("{0}_{1}", DeviceId, AssetIdStr);
-            }
-            else
-                assetId = string.Format("{0}_{1}", Gateway, AssetIdStr);                                            //for assets attached to the gateway
-            return string.Format("client/{0}/out/asset/{1}/state", ClientId, assetId);
+            return string.Format("client/{0}/{1}/device/{2}/asset/{3}/{4}", ClientId, Direction, DeviceId, AssetId, Mode);
         }
     }
 }

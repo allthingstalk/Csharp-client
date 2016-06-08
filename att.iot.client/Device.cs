@@ -60,20 +60,7 @@ namespace att.iot.client
 
 
         /// <summary>
-        /// Occurs when a management command arrived for an asset.
-        /// </summary>
-        public event EventHandler<AssetManagementCommandData> AssetManagementCommand;
-
-
-        /// <summary>
-        /// Occurs when a management command arrived for a device.
-        /// </summary>
-        public event EventHandler<string> DeviceManagementCommand;
-
-
-        /// <summary>
-        /// Occurs when the mqtt connection was reset and recreated. This allows the application to recreate the subscriptions.
-        /// You can use <see cref="Device.RegisterGateways"/> for this.
+        /// Occurs when the mqtt connection was reset and recreated. 
         /// </summary>
         public event EventHandler ConnectionReset;
         #endregion
@@ -172,48 +159,17 @@ namespace att.iot.client
                 string[] parts = e.Topic.Split(new char[] { '/' });
                 TopicPath path = new TopicPath(parts);
 
-                if (path.IsSetter == false && path.AssetId != null)                      //it can only be an actuator value is there is an asset path.
+                string mode = path.Mode.ToLower();
+                if (mode == "command" && path.AssetId != null)                      //it can only be an actuator value is there is an asset path.
                     OnActuatorValue(path, e);
-                else
-                    OnManagementCommand(path, e);
+                else if (_logger != null)
+                    _logger.Error("invalid mode: " + mode + ", can't dispatch message");
+
             }
             catch (Exception ex)
             {
                 if (_logger != null)
                     _logger.Error("problem with incomming mqtt message", ex.ToString());
-            }
-        }
-
-        /// <summary>
-        /// Called when  a management command message arrived.
-        /// </summary>
-        /// <param name="path">The path.</param>
-        /// <param name="e">The <see cref="MqttMsgPublishEventArgs"/> instance containing the event data.</param>
-        private void OnManagementCommand(TopicPath path, MqttMsgPublishEventArgs e)
-        {
-            if (path.AssetId != null)
-            {
-                if (AssetManagementCommand != null)
-                {
-                    AssetManagementCommandData data = new AssetManagementCommandData();
-                    data.Asset = path.AssetId[0];
-#if WINDOWS_UAP
-                    data.Command = System.Text.Encoding.UTF8.GetString(e.Message, 0, e.Message.Length);
-#else
-                    data.Command = System.Text.Encoding.UTF8.GetString(e.Message);
-#endif
-
-                    AssetManagementCommand(this, data);
-                }
-            }
-            else if (DeviceManagementCommand != null)
-            {
-#if WINDOWS_UAP
-                string command = System.Text.Encoding.UTF8.GetString(e.Message, 0, e.Message.Length);
-#else
-                string command = System.Text.Encoding.UTF8.GetString(e.Message);
-#endif
-                DeviceManagementCommand(this, command);
             }
         }
 
@@ -231,22 +187,16 @@ namespace att.iot.client
 #else
                 string val = System.Text.Encoding.UTF8.GetString(e.Message);
 #endif
-                ActuatorData data = null;
-                if (val[0] == '{')
-                {
-                    data = new JsonActuatorData();
-                }
-                else
-                    data = new StringActuatorData();
+                ActuatorData data = new ActuatorData();
                 data.Load(val);
-                data.Asset = path.AssetId[0];
+                data.Asset = path.AssetId;
                 ActuatorValue(this, data);
             }
         }
 
-        string getTopicPath(int assetId)
+        string getTopicPath(object assetId)
         {
-            return string.Format("client/{0}/out/device/{1}/asset/{2}/state", _clientId, DeviceId, assetId);
+            return string.Format("client/{0}/out/device/{1}/asset/{2}/state", _clientId, DeviceId, assetId.ToString());
         }
 
         /// <summary>
@@ -255,7 +205,7 @@ namespace att.iot.client
         /// <param name="asset">The asset.</param>
         /// <param name="value">The value.</param>
         /// <exception cref="System.NotImplementedException"></exception>
-        public void Send(int asset, object value)
+        public void Send(object asset, object value)
         {
             string toSend = PrepareValueForSending(value);
             string topic = getTopicPath(asset);
@@ -321,7 +271,7 @@ namespace att.iot.client
             string root = string.Format("client/{0}/in/device/{1}", _clientId, _deviceId);
             topics[0] = root + "/management";
             topics[1] = root + "/asset/+/command";
-            topics[2] = root + "/asset/+/management";
+            topics[2] = root + "/asset/+/event";
             return topics;
         }
 
@@ -397,18 +347,13 @@ namespace att.iot.client
             }
         }
 
-        string getRemoteAssetId(int assetId)
-        {
-            return string.Format("{0}_{1}", DeviceId, assetId);
-        }
-
         /// <summary>
         /// Updates or creates the asset.
         /// </summary>
         /// <param name="asset">The id of the asset.</param>
         /// <param name="content">The content of the asset as a JObject.</param>
         /// <param name="extraHeaders">any optional extra headers that should be included in the message.</param>
-        public void UpdateAsset(int asset, JObject content, Dictionary<string, string> extraHeaders = null)
+        public void UpdateAsset(object asset, JObject content, Dictionary<string, string> extraHeaders = null)
         {
             try
             {
@@ -463,7 +408,7 @@ namespace att.iot.client
         /// <returns>
         /// True if successful, otherwise false
         /// </returns>
-        public bool UpdateAsset(int assetId, string name, string description, bool isActuator, string type, AssetStyle style = AssetStyle.Undefined)
+        public bool UpdateAsset(object assetId, string name, string description, bool isActuator, string type, AssetStyle style = AssetStyle.Undefined)
         {
             try
             {
@@ -569,12 +514,12 @@ namespace att.iot.client
         /// </summary>
         /// <param name="asset">The asset id (local to this device). </param>
         /// <param name="value">The value, either a string with a single value or a json object with multiple values.</param>
-        public void SendAssetValueHTTP(int asset, object value)
+        public void SendAssetValueHTTP(object asset, object value)
         {
             string toSend = PrepareValueForSendingHTTP(value);
             try
             {
-                string uri = "/device/" + DeviceId.ToString() + "/asset/" + asset + "/state";
+                string uri = "/device/" + DeviceId.ToString() + "/asset/" + asset.ToString() + "/state";
                 if (_logger != null)
                     _logger.Trace("send asset value over HTTP request\nURI: {0}\nvalue: {1}", uri, toSend);
                 HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Put, uri);
@@ -617,12 +562,12 @@ namespace att.iot.client
         /// </remarks>
         /// <param name="asset">The full id of the asset to send a command to</param>
         /// <param name="value">The value to send to the command</param>
-        public void SendCommandTo(string asset, object value)
+        public void SendCommandTo(object asset, object value)
         {
             string toSend = value.ToString();
             try
             {
-                string uri = "asset/" + asset + "/command";
+                string uri = "asset/" + asset.ToString() + "/command";
                 if (_logger != null)
                     _logger.Trace("send command request\nURI: {0}\nvalue: {1}", uri, toSend);
                 HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Put, uri);
@@ -661,7 +606,7 @@ namespace att.iot.client
         /// </summary>
         /// <param name="asset">the id (local to this device) of the asset for which to return the last recorded value.</param>
         /// <returns>the value as a json structure.</returns>
-        public JToken GetAssetState(int asset)
+        public JToken GetAssetState(object asset)
         {
             try
             {
