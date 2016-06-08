@@ -98,7 +98,7 @@ namespace att.iot.client
         /// </remarks>
         /// <param name="asset">The full id of the asset to send a command to</param>
         /// <param name="value">The value to send to the command</param>
-        void SendCommandTo(string asset, object value);
+        void SendCommandTo(object asset, object value);
 
     }
 }
