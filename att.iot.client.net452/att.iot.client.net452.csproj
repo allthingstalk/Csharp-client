@@ -63,14 +63,8 @@
     <Compile Include="..\att.iot.client\Model\ActuatorData.cs">
       <Link>Model\ActuatorData.cs</Link>
     </Compile>
-    <Compile Include="..\att.iot.client\Model\JsonActuatorData.cs">
-      <Link>Model\JsonActuatorData.cs</Link>
-    </Compile>
     <Compile Include="..\att.iot.client\Model\ManagementCommandData.cs">
       <Link>Model\ManagementCommandData.cs</Link>
-    </Compile>
-    <Compile Include="..\att.iot.client\Model\StringActuatorData.cs">
-      <Link>Model\StringActuatorData.cs</Link>
     </Compile>
     <Compile Include="..\att.iot.client\Model\TopicPath.cs">
       <Link>Model\TopicPath.cs</Link>

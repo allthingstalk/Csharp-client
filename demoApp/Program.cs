@@ -30,8 +30,9 @@ namespace demoApp
         static void Main(string[] args)
         {
             Init();
-            //update or create the assets on the device
-			_device.UpdateAsset(1, "test actuator", "a test actuator", true, "boolean");
+            //update or create the assets on the device. 
+			_device.UpdateAsset("1", "test actuator", "a test actuator", true, "boolean");
+            //the id of the asset can be string, integer,...  
 			_device.UpdateAsset(2, "test sensor", "a test sensor", false, "boolean");
             _device.UpdateAsset(3, "test sensor 2", "a test sensor without type, defaults to string, does not overwrite manual changes on platform", false, null);
 
@@ -47,12 +48,13 @@ namespace demoApp
             _logger.Trace("incomming value found: {0}", e.ToString());
 
             //check the actuator for which we received a command
-            if (e.Asset == 1)
+            //the actuator id always comes in as a string.
+            if (e.Asset == "1")
             {
                 //actuators can send simple strings or complex json values. 
-                StringActuatorData data = (StringActuatorData)e;
                 //do something with the value
-                if(data.AsBool() == true)
+                
+                if((bool)e.Value == true)
                     _logger.Trace("actuating sensor");
             }
         }

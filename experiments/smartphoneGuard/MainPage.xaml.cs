@@ -53,10 +53,9 @@ namespace smartphoneGuard
 
         private void _server_ActuatorValue(object sender, ActuatorData e)
         {
-            if (e.Asset == _pin)
+            if (e.Asset == _pin.ToString())
             {
-                StringActuatorData data = (StringActuatorData)e;
-                if (data.AsBool() == true)
+                if ((bool)e.Value == true)
                 {
                     _buzzer.ChangeState(GrovePi.Sensors.SensorStatus.On);
                     _device.Send(_pin, "true");             //feedback for led

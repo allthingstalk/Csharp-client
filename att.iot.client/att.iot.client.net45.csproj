@@ -60,8 +60,6 @@
     <Compile Include="AssetStyle.cs" />
     <Compile Include="ILogger.cs" />
     <Compile Include="Model\ActuatorData.cs" />
-    <Compile Include="Model\StringActuatorData.cs" />
-    <Compile Include="Model\JsonActuatorData.cs" />
     <Compile Include="Model\ManagementCommandData.cs" />
     <Compile Include="IDevice.cs" />
     <Compile Include="Model\TopicPath.cs" />

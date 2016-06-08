@@ -133,37 +133,6 @@ Loads the data.
 > **value:** The raw value.
 
 
-##iot.client.JsonActuatorData
-            
-contains the data that we found when an actuator value was send from the cloud to a device in Json format.
-        
-###Methods
-
-
-####Load(System.String)
-Loads the data.
-> #####Parameters
-> **value:** The raw value.
-
-
-####ToString
-Returns a that represents this instance.
-> #####Return value
-> A that represents this instance.
-
-##iot.client.StringActuatorData
-            
-contains the data that we found when an actuator value was send from the cloud to a device in csv format.
-        
-###Methods
-
-
-####Load(System.String)
-Loads the data.
-> #####Parameters
-> **value:** The raw value.
-
-
 ####ToString
 Returns a that represents this instance.
 > #####Return value
@@ -181,20 +150,12 @@ Gets or sets the gateway to issue the command to. The gateway.
 Gets or sets the client identifier. The client identifier is usually the account name. It is used to identify the api call in the cloudapp.
 ####DeviceId
 Gets or sets the (local) device identifier to issue the command to (if any). The device identifier. This can be null when the topicPath points to a gateway-asset.
-####RemoteDeviceId
-returns the device id, as formatted for the cloud app. If there is a gateway known, the gateway id will be prepended to the device id, otherwise, only the device id is used. The remote device identifier.
-####RemoteId
-gets/sets the full id as used by the cloud. Format: {GatewayId}_{DeviceId}_{AssetId}
-####DeviceIdAsNr
-Gets the device identifier as a byte value.
 ####AssetId
 Gets or sets the (local) asset identifier to issue the command to (if any). The asset identifier is an array if integers which form a path into the command class structure. To get this value as a formatted string, use The asset identifier.
-####AssetIdStr
-Gets or sets the (local) asset identifier string. Warning: the setter expects a deviceId in front (not stored) The asset identifier string.
-####RemoteAssetId
-Gets/sets the asset identifier as formatted for the cloud app. The remote asset identifier.
-####IsSetter
-when true, it's a data feed from cloud to client. When false, and the sensorId is declared, then it's a command true if this instance is setter; otherwise, false.
+####Mode
+Determins the mode of the topic path: - state: the value of an asset - command: the new value for an actuator - event: device/asset removed or added. true if this instance is setter; otherwise, false.
+####Direction
+determines the direction of the message: - out: from device to cloud - in: from cloud to device
 ###Methods
 
 
@@ -212,22 +173,6 @@ performs a deep copy
 > #####Parameters
 > **source:** The source.
 
-
-####StoreAssetId(System.String[],System.Int32)
-Stores the asset identifier.
-> #####Parameters
-> **parts:** The parts.
-
-> **offset:** The offset into the list where the asset id starts.
-
-
-####BuildAssetStr(System.Int32[])
-Builds an asset id string from the specified assetpath.
-> #####Parameters
-> **assetpath:** The asset identifier.
-
-> #####Return value
-> 
 
 ####ToString
 Returns a that represents this instance.
