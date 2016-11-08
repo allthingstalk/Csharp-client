@@ -39,8 +39,7 @@ The 'MyLogger' object that is used, is a interface implementation that simply wr
             _logger = new MyLogger();
             //create the device object with your account details
             _device = new Device("testjan", "5i4duakv2bq", _logger);
-            //if the device was already created, load the id from the settings.
-            _device.DeviceId = Properties.Settings.Default["deviceId"].ToString();
+            _device.DeviceId = "your device id";
             _device.ActuatorValue += _device_ActuatorValue;
         }
 
@@ -49,29 +48,17 @@ The 'MyLogger' object that is used, is a interface implementation that simply wr
         static void Main(string[] args)
         {
             Init();
-            bool success;
-            //create or update the device in the cloud.
-            if (string.IsNullOrEmpty(_device.DeviceId) == true)
-                success = _device.CreateDevice("C# test device", "a device created from my test script");
-            else
-                success = _device.UpdateDevice("C# test device", "a device created from my test script");
+            //update or create the assets on the device. 
+			_device.UpdateAsset("1", "test actuator", "a test actuator", true, "boolean");
+            //the id of the asset can be string, integer,...  
+			_device.UpdateAsset(2, "test sensor", "a test sensor", false, "boolean");
+            _device.UpdateAsset(3, "test sensor 2", "a test sensor without type, defaults to string, does not overwrite manual changes on platform", false, null);
 
-            if (success)
-            {
-                //store the device id in the settings, so we can reuse it later on.
-                Properties.Settings.Default["deviceId"] = _device.DeviceId; 
-                Properties.Settings.Default.Save();
+            //wait to continue so that we can send a value from the cloud to the app.
+            Console.ReadKey();                                          
 
-                //update or create the assets on the device
-                _device.UpdateAsset(1, "test actuator", "a test actuator", true, "bool");
-                _device.UpdateAsset(2, "test sensor", "a test sensor", false, "bool");
-
-                //wait to continue so that we can send a value from the cloud to the app.
-                Console.ReadKey();                                          
-
-                //send a value to the platform
-                _device.Send(2, "true");
-            }
+			//send a value to the platform
+			_device.Send(2, "true");
         }
 
         static void _device_ActuatorValue(object sender, ActuatorData e)
