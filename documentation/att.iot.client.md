@@ -8,21 +8,21 @@ Manages a single IOT device.
 ###Properties
 
 ####DeviceId
-gets or sets the id of the device related to this object. When the device is created with , then this property is filled in automatically.
+Gets or sets the id of the device related to this object. Create the device on the cloud and assign the generated id to this property.
 ###Methods
 
 
-####UpdateAsset(System.Int32,Newtonsoft.Json.Linq.JObject,System.Collections.Generic.Dictionary{System.String,System.String})
+####UpdateAsset(System.Object,Newtonsoft.Json.Linq.JObject,System.Collections.Generic.Dictionary{System.String,System.String})
 Updates or creates the asset.
 > #####Parameters
-> **asset:** The id of the asset (local to your device).
+> **asset:** The id of the asset (local to your device). Should be a number or string
 
 > **content:** The content of the asset as a JObject.
 
 > **extraHeaders:** any optional extra headers that should be included in the message.
 
 
-####UpdateAsset(System.Int32,System.String,System.String,System.Boolean,System.String,att.iot.client.AssetStyle)
+####UpdateAsset(System.Object,System.String,System.String,System.Boolean,System.String,att.iot.client.AssetStyle)
 Simple way to create or update an asset.
 > #####Parameters
 > **assetId:** The asset identifier (local).
@@ -38,7 +38,7 @@ Simple way to create or update an asset.
 > #####Return value
 > True if successful, otherwise false
 
-####Send(System.Int32,System.Object)
+####Send(System.Object,System.Object)
 sends the asset value to the server.
 > #####Parameters
 > **asset:** The asset.
@@ -51,7 +51,7 @@ requests the primary asset id and it's profile type of the device.
 > #####Return value
 > the asset definition
 
-####SendAssetValueHTTP(System.Int32,System.Object)
+####SendAssetValueHTTP(System.Object,System.Object)
 sends the asset value to the server.
 > #####Parameters
 > **asset:** The asset id (local to this device).
@@ -59,7 +59,7 @@ sends the asset value to the server.
 > **value:** The value, either a string with a single value or a json object with multiple values.
 
 
-####GetAssetState(System.Int32)
+####GetAssetState(System.Object)
 gets the last stored value of the specified asset.
 > #####Parameters
 > **asset:** the id (local to this device) of the asset for which to return the last recorded value.
@@ -72,7 +72,7 @@ gets all the assets that the cloud knows for this device.
 > #####Return value
 > a json object (array) containing all the asset definitions
 
-####SendCommandTo(System.String,System.Object)
+####SendCommandTo(System.Object,System.Object)
 Use this function to command another device. You can only send commands to devices that you own, which are in the same account as this device.
 sends a command to an asset on another device.
 > #####Parameters

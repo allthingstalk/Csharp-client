@@ -418,7 +418,7 @@ namespace att.iot.client
         /// <param name="name">The name of the asset.</param>
         /// <param name="description">The description.</param>
         /// <param name="isActuator">if set to <c>true</c> an actuator should be created, otherwise a sensor.</param>
-        /// <param name="type">The profile type of the asst (Null, string, integer, number, boolean or a full profile definition, see: (http://docs.smartliving.io/smartliving-maker/profiles/) ).</param>
+        /// <param name="type">The profile type of the asst (Null, string, integer, number, boolean or a full profile definition, see: (http://allthingstalk.com/docs/cloud/concepts/assets/profiles/) ).</param>
         /// <returns>
         /// True if successful, otherwise false
         /// </returns>
