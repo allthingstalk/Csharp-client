@@ -1,3 +1,9 @@
+### This library is deprecated
+
+Csharp-client library is deprecated, and will not receive any further updates.
+
+---
+
 # Csharp-client
 
 ## Description
